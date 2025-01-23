@@ -26,8 +26,9 @@ export default function Page(props: IPageProps) {
             const allergyData = getAllergyData(allergies);
             const medicationData = getMedicationData(medications);
             const conditionData = getConditionData(conditions);
+            const dietData = getDietData(diets);
 
-            return {patientData, measureData, allergyData, medicationData, medications, conditions, diets};
+            return {patientData, measureData, allergyData, medicationData, conditionData, dietData};
         } catch (error) {
             console.error("Error getting patient data:", error);
             return null;
@@ -96,9 +97,42 @@ export default function Page(props: IPageProps) {
 
         const conditionArray = [];
         conditions.forEach((condition) => {
-           
+            const clinicalStatus = condition?.clinicalStatus?.coding?.[0]?.code ?? "Unknown";
+            const conditionName = condition?.code?.text ?? "Unknown";
+
+            conditionArray.push({
+                name: conditionName,
+                status: clinicalStatus
+            });
         });
-        return conditionArray;
+    
+        return (conditionArray.length > 0) ? conditionArray : null;
+    }
+
+    function getDietData(diets) {
+        if (!diets || diets.length === 0) { return null; }
+    
+        const dietDetails = [];
+    
+        diets.forEach((diet) => {
+            if (diet?.status === "active") {
+                const orderType = diet?.orderType?.text ?? "Unknown";
+                const dietName = diet?.diet?.coding?.[0]?.display ?? "Unknown";
+                const dietInstruction = diet?.instruction ?? "Unknown";
+                const dateTime = diet?.dateTime ?? "Unknown";
+                const oralDiet = diet?.oralDiet ?? "Unknown";
+                const supplement = diet?.supplement ?? "Unknown";
+                const enteralFormula = diet?.enteralFormula ?? "Unknown";
+                const scheduledTime = diet?.scheduledTime ?? "Unknown";
+                const intakeType = diet?.intakeType ?? "Unknown";
+                const patientInstruction = diet?.patientInstruction ?? "Unknown";
+        
+                dietDetails.push({orderType, dietName, dietInstruction, dateTime, oralDiet,
+                    supplement, enteralFormula, scheduledTime, intakeType, patientInstruction});
+            }
+        });
+    
+        return (dietDetails.length > 0) ? dietDetails : null;
     }
 
     useEffect(() => {
