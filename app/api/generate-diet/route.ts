@@ -6,127 +6,157 @@ const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+const mealSchema = {
+    type: "object",
+    properties: {
+        items: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    food: { type: "string" },
+                    quantity: { type: "string" },
+                    calories: { type: "number" },
+                    nutrients: {
+                        type: "object",
+                        properties: {
+                            protein: { type: "number" },
+                            carbs: { type: "number" },
+                            fiber: { type: "number" },
+                            fat: { type: "number" },
+                            glycemicIndex: { type: "number" }
+                        },
+                        required: ["carbs"]
+                    }
+                },
+                required: ["food", "quantity", "calories"]
+            }
+        }
+    },
+    required: ["items"]
+};
 
-export async function POST(request: Request){
-    const { dietDescription } = await request.body;
+const macronutrientSchema = {
+    type: "object",
+    properties: {
+        carbs: { type: "number" },
+        protein: { type: "number" },
+        fat: { type: "number" },
+        distribution: {
+            type: "object",
+            properties: {
+                morning: { type: "number" },
+                midday: { type: "number" },
+                evening: { type: "number" }
+            }
+        }
+    },
+    required: ["carbs", "protein", "fat"]
+};
+
+
+export async function POST(request: Request) {
+    const { dietDescription } = await request.json();
 
     try {
         const completion = await client.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
-                { role: "system", content: "You are a nutritionist. Generate a balanced diet plan based on the user's preferences and goals." },
-                { role: "user", content: dietDescription},
+                { 
+                    role: "system", 
+                    content: `Adapt meal structure dynamically based on user-specified quantity. Maintain all clinical 
+                            requirements while distributing nutrition appropriately across the specified number of 
+                            daily meals. Optimize meal timing and insulin dosing for the given frequency.` 
+                },
+                { 
+                    role: "user", 
+                    content: dietDescription 
+                },
             ],
             response_format: {
                 type: "json_schema",
                 json_schema: {
                     name: "dietPlan",
-                    schema: {
-                        type: "object",
-                        properties: {
-                            days: {
-                                type: "array",
-                                items: {
-                                    type: "object",
-                                    properties: {
-                                        day: { type: "string" },
-                                        meals: {
-                                            type: "object",
-                                            properties: {
-                                                breakfast: {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                days: {
+                                    type: "array",
+                                    items: {
+                                        type: "object",
+                                        properties: {
+                                            day: { type: "string" },
+                                            meals: {
+                                                type: "array",
+                                                items: {
                                                     type: "object",
                                                     properties: {
-                                                        items: {
-                                                            type: "array",
-                                                            items: {
-                                                                type: "object",
-                                                                properties: {
-                                                                    food: { type: "string" },
-                                                                    quantity: { type: "string" },
-                                                                    calories: { type: "number" }
-                                                                },
-                                                                required: ["food", "quantity", "calories"]
-                                                            }
+                                                        mealType: { 
+                                                            type: "string",
+                                                            enum: ["Breakfast", "Brunch", "Lunch", "Snack", "Dinner", "Pre-Workout", "Post-Workout"],
+                                                            description: "Adapt based on total meals and user preferences"
                                                         },
-                                                        totalCalories: { type: "number" }
+                                                        time: { type: "string", format: "HH:mm" },
+                                                        items: mealSchema.properties.items,
+                                                        totalCalories: { type: "number" },
+                                                        carbsForInsulin: { type: "number" },
+                                                        preparation: { type: "string" }
                                                     },
-                                                    required: ["items", "totalCalories"]
-                                                },
-                                                lunch: {
-                                                type: "object",
-                                                    properties: {
-                                                    items: {
-                                                        type: "array",
-                                                            items: {
-                                                            type: "object",
-                                                                properties: {
-                                                                food: { type: "string" },
-                                                                quantity: { type: "string" },
-                                                                calories: { type: "number" }
-                                                            },
-                                                            required: ["food", "quantity", "calories"]
-                                                        }
-                                                    },
-                                                    totalCalories: { type: "number" }
-                                                },
-                                                required: ["items", "totalCalories"]
-                                            },
-                                            dinner: {
-                                                type: "object",
-                                                properties: {
-                                                    items: {
-                                                        type: "array",
-                                                        items: {
-                                                            type: "object",
-                                                            properties: {
-                                                                food: { type: "string" },
-                                                                quantity: { type: "string" },
-                                                                calories: { type: "number" }
-                                                            },
-                                                            required: ["food", "quantity", "calories"]
-                                                        }
-                                                    },
-                                                    totalCalories: { type: "number" }
-                                                },
-                                                required: ["items", "totalCalories"]
-                                            },                                 
-                                                snacks: {
-                                                    type: "object",
-                                                    properties: {
-                                                        items: {
-                                                            type: "array",
-                                                            items: {
-                                                                type: "object",
-                                                                properties: {
-                                                                    food: { type: "string" },
-                                                                    quantity: { type: "string" },
-                                                                    calories: { type: "number" }
-                                                                },
-                                                                required: ["food", "quantity", "calories"]
-                                                            }
-                                                        },
-                                                        totalCalories: { type: "number" }
-                                                    },
-                                                    required: ["items", "totalCalories"]
+                                                    required: ["mealType", "items", "totalCalories"]
                                                 }
                                             },
-                                            required: ["breakfast", "lunch", "dinner", "snacks"]
+                                            daySummary: {
+                                                type: "object",
+                                                properties: {
+                                                    totalCalories: { type: "number" },
+                                                    mealFrequency: { type: "number" },
+                                                    eatingWindow: { type: "string" }
+                                                },
+                                                required: ["totalCalories", "mealFrequency"]
+                                            }
                                         },
-                                        dayTotal: { type: "number" }
+                                        required: ["day", "meals", "daySummary"]
+                                    }
+                                },
+                                insulinDosing: {
+                                    type: "object",
+                                    properties: {
+                                        regimen: {
+                                            type: "array",
+                                            items: {
+                                                type: "object",
+                                                properties: {
+                                                    relativeToMeal: { type: "number", description: "Meal index (0-based)" },
+                                                    type: { type: "string" },
+                                                    units: { type: "number" },
+                                                    carbRatio: { type: "number" }
+                                                }
+                                            }
+                                        },
+                                        totalDailyDose: { type: "number" }
                                     },
-                                    required: ["day", "meals", "dayTotal"]
-                                }
-                            }
-                        },
-                        required: ["days"]
+                                    required: ["regimen"]
+                                },
+                                macronutrientDistribution: {
+                                    type: "object",
+                                    properties: {
+                                        perMeal: {
+                                            type: "array",
+                                            items: macronutrientSchema
+                                        },
+                                        dailyTotal: macronutrientSchema
+                                    },
+                                    required: ["dailyTotal"]
+                                },
+                            },
+                            required: ["days", "insulinDosing", "macronutrientDistribution"]
+                        }
                     }
                 }
-            }
-        });
-
-        return Response.json({ dietPlan: completion.choices[0].message.content });
+            });
+        return Response.json(JSON.parse(completion.choices[0].message.content));
     } catch (error) {
         console.error('Error generating diet:', error);
-        return  Response.json({ error: 'Failed to generate diet.' });
+        return Response.json({ error: 'Failed to generate adaptive meal plan' }, { status: 500 });
     }
 }
