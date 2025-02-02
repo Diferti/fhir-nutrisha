@@ -52,7 +52,7 @@ export default function Page(props: IPageProps) {
     const getPatientInfo = async (patientId: string) => {
         try {
             const patient = await appContext.fhirClient.request(`Patient/${patientId}`, { flat: true });
-            const observations = await appContext.fhirClient.request(`Observation?subject=Patient/${patientId}`, { flat: true });
+            const observations = await appContext.fhirClient.request(`Observation?subject=Patient/${patientId}&_count=1000`, { flat: true });
             const allergies = await appContext.fhirClient.request(`AllergyIntolerance?patient=Patient/${patientId}`, { flat: true });
             const medications = await appContext.fhirClient.request(`MedicationRequest?subject=Patient/${patientId}`, { flat: true });
             const conditions = await appContext.fhirClient.request(`Condition?subject=Patient/${patientId}`, { flat: true });
@@ -484,7 +484,7 @@ Please provide:
                 fileReader.onload = () => {
                     setImagePreview(fileReader.result);
                 };
-                fileReader.readAsDataURL(image);
+                fileReader.readAsDataURL(selectedImage);
             
                 return () => {
                   fileReader.abort();
@@ -509,16 +509,20 @@ Please provide:
               const imageSender = async () => {
                 setIsLoadingImage(true);
                 setImageError(null);
+                const userData = {
+                    currentBG: 162,
+                    targetBG: 100,
+                    carbRatio: 15,
+                    sensitivity: 50
+                }
      
                 try {
                     const formData = new FormData();
                     formData.append('image', selectedImage);
+                    formData.append('userData', JSON.stringify(userData));
 
                     const response = await fetch('/api/analyze-image', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
                         body: formData,
                     });
               
