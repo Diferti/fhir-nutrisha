@@ -93,11 +93,11 @@ export default function Page(props: IPageProps) {
         if (obs.valueCodeableConcept) {
           return obs.valueCodeableConcept.text || 
                  obs.valueCodeableConcept.coding?.[0]?.display || 
-                 'Unknown';
+                 null;
         }
         if (obs.valueString) return obs.valueString;
         if (obs.valueBoolean !== undefined) return obs.valueBoolean.toString();
-        return 'Unknown';
+        return null;
       }
     
     function getMeasureData(observations) {
@@ -444,7 +444,7 @@ Please provide:
                 setIsLoadingDiet(true);
                 setError(null);
                 const formatedDietDescription = dietDescription.split("\n").filter(line => line.trim()).join("\n");
-                
+
                 try {
                   const response = await fetch('/api/generate-diet', {
                     method: 'POST',
