@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext, useMemo, useRef } from "react";
 import * as r4 from "fhir/r4";
 import Head from "next/head";
 import { AppContext } from "@/lib/hooks/AppContext/AppContext";
+import { ImageError } from "next/dist/server/image-optimizer";
 
 export interface IPageProps { }
 export default function Page(props: IPageProps) {
@@ -38,7 +39,14 @@ export default function Page(props: IPageProps) {
     const [dietPlan, setDietPlan] = useState<any>(null);
     const [aiRequest, setAiRequest] = useState<any>(null);
     const [isLoadingDiet, setIsLoadingDiet] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [dietError, setDietError] = useState<string | null>(null);
+
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = useRef(null);
+    const [isLoadingImage, setIsLoadingImage] = useState(false);
+    const [imageError, setImageError] = useState<string | null>(null);
+    const [imageAnalysis, setImageAnalysis] = useState<any>(null);
     
 
     const getPatientInfo = async (patientId: string) => {
@@ -442,32 +450,91 @@ Please provide:
 `;
             const handleGenerateDiet = async () => {
                 setIsLoadingDiet(true);
-                setError(null);
+                setDietError(null);
                 const formatedDietDescription = dietDescription.split("\n").filter(line => line.trim()).join("\n");
 
                 try {
-                  const response = await fetch('/api/generate-diet', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ dietDescription: formatedDietDescription }),
-                  });
+                    const response = await fetch('/api/generate-diet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ dietDescription: formatedDietDescription }),
+                    });
               
-                  if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                  }
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                   
-                  setAiRequest(formatedDietDescription);
-                  const data = await response.json();
-                  setDietPlan(data);
+                    setAiRequest(formatedDietDescription);
+                    const data = await response.json();
+                    setDietPlan(data);
                 } catch (err) {
-                  console.error('Diet generation failed:', err);
-                  setError(err instanceof Error ? err.message : 'Failed to generate diet plan');
+                    console.error('Diet generation failed:', err);
+                    setDietError(err instanceof Error ? err.message : 'Failed to generate diet plan');
                 } finally {
-                  setIsLoadingDiet(false);
+                    setIsLoadingDiet(false);
                 }
-              };              
+              };
+              
+              useEffect(() => {
+                if (!selectedImage) return;
+            
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    setImagePreview(fileReader.result);
+                };
+                fileReader.readAsDataURL(image);
+            
+                return () => {
+                  fileReader.abort();
+                  if (imagePreview) URL.revokeObjectURL(imagePreview);
+                };
+              }, [selectedImage]);
+            
+              const imageHandler = () => {
+                fileInputRef.current.click();
+              };
+            
+              const imageChangeHandler= (event) => {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    setSelectedImage(file);
+                } else {
+                    setSelectedImage(null);
+                    setImagePreview(null);
+                }
+              };
+
+              const imageSender = async () => {
+                setIsLoadingImage(true);
+                setImageError(null);
+     
+                try {
+                    const formData = new FormData();
+                    formData.append('image', selectedImage);
+
+                    const response = await fetch('/api/analyze-image', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: formData,
+                    });
+              
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                  
+                    const data = await response.json();
+                    setImageAnalysis(data);
+                } catch (err) {
+                    console.error('Diet generation failed:', err);
+                    setImageError(err instanceof Error ? err.message : 'Failed to analyze image');
+                } finally {
+                    setIsLoadingImage(false);
+                }
+              };
 
     return (
         <div className="p-8">
@@ -725,69 +792,113 @@ Please provide:
                     </label>
                 </div>
 
-        {/* Diet Pace */}
-        <div className="form-group">
-            <label>Diet Pace</label>
-            <div className="flex gap-4">
-                {['slow', 'middle', 'fast'].map((pace) => (
-                    <label key={pace} className="flex items-center space-x-2">
-                        <input
-                            type="radio"
-                            value={pace}
-                            checked={dietPace === pace}
-                            onChange={() => setDietPace(pace)}
-                            className="form-radio"/>
-                        <span className="capitalize">{pace}</span>
-                    </label>
-                ))}
+                {/* Diet Pace */}
+                <div className="form-group">
+                    <label>Diet Pace</label>
+                    <div className="flex gap-4">
+                        {['slow', 'middle', 'fast'].map((pace) => (
+                            <label key={pace} className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    value={pace}
+                                    checked={dietPace === pace}
+                                    onChange={() => setDietPace(pace)}
+                                    className="form-radio"/>
+                                <span className="capitalize">{pace}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Calories */}
+                 <div className="form-group">
+                    <label>Daily Calories</label>
+                    <input
+                        type="number"
+                        value={calories}
+                        onChange={(e) => setCalories(e.target.value)}
+                        className="form-input"
+                        step="50"
+                        min="0"
+                        placeholder="Enter target calories per day"/>
+                </div>
             </div>
-        </div>
 
-        {/* Calories */}
-        <div className="form-group">
-            <label>Daily Calories</label>
-            <input
-                type="number"
-                value={calories}
-                onChange={(e) => setCalories(e.target.value)}
-                className="form-input"
-                step="50"
-                min="0"
-                placeholder="Enter target calories per day"/>
-        </div>
-        </div>
+            <button 
+                onClick={handleGenerateDiet}
+                disabled={isLoadingDiet}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50">
+                {isLoadingDiet ? 'Generating...' : 'Generate Diet Plan'}
+            </button>
 
-        <button 
-            onClick={handleGenerateDiet}
-            disabled={isLoadingDiet}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-        >
-            {isLoadingDiet ? 'Generating...' : 'Generate Diet Plan'}
-        </button>
+            {aiRequest && (
+                <div>
+                    <h2 className="text-xl font-bold mb-4">Diet Parameters</h2>
+                    <pre className="bg-gray-50 p-4 rounded overflow-auto max-h-96 text-sm">
+                        {aiRequest}
+                    </pre>
+                </div>
+             )}
 
-        {aiRequest && (
+            {dietError && (
+                <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
+                    Error: {dietError}
+                </div>
+            )}
+
+            {dietPlan && (
+                <div className="mt-8">
+                    <h2 className="text-xl font-bold mb-4">Generated Diet Plan</h2>
+                    <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[1000px]">
+                        {JSON.stringify(dietPlan, null, 2)}
+                    </pre>
+                </div>
+            )}
+
             <div>
-            <h2 className="text-xl font-bold mb-4">Diet Parameters</h2>
-            <pre className="bg-gray-50 p-4 rounded overflow-auto max-h-96 text-sm">
-              {aiRequest}
-            </pre>
-          </div>
-        )}
+                <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={imageChangeHandler}
+                    style={{ display: 'none' }}/>
 
-        {error && (
-            <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-            Error: {error}
-            </div>
-        )}
+                <button 
+                    onClick={imageHandler}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 mt-[50px]">
+                        Upload Image
+                </button>
 
-        {dietPlan && (
-            <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4">Generated Diet Plan</h2>
-            <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[1000px]">
-                {JSON.stringify(dietPlan, null, 2)}
-            </pre>
+                {imagePreview && (
+                    <div>
+                        <h4>Preview:</h4>
+                        <img 
+                            src={imagePreview} 
+                            alt="Preview" 
+                            style={{ maxWidth: '200px', marginTop: '10px' }}/>
+                            <button 
+                                onClick={imageSender}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 mt-[50px]">
+                                Send Image
+                            </button>
+                    </div>
+                )}
+
+                {imageError && (
+                    <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
+                        Error: {imageError}
+                    </div>
+                )}
+
+                {imageAnalysis && (
+                    <div className="mt-8">
+                        <h2 className="text-xl font-bold mb-4">Image Analysis</h2>
+                        <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[1000px]">
+                            {JSON.stringify(imageAnalysis, null, 2)}
+                        </pre>
+                    </div>
+                )}
             </div>
-        )}
         </div>
     );
 }
