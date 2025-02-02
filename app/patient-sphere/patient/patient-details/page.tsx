@@ -314,136 +314,136 @@ export default function Page(props: IPageProps) {
       }, [patientInfo]);
 
       const dietDescription = `
-            Generate a ${duration}-${durationUnit} ${dietPace}-paced diet plan for a ${patientInfo?.patientData?.age}-year-old ${patientInfo?.patientData?.gender} based on:
-            ${patientInfo?.patientData?.gender === 'male' ? '♂ Male' : '♀ Female'} Profile:
-            - Current Weight: ${weight} kg
-            - Height: ${height} cm
-            - BMI: ${bmi}
-            - Activity Level: ${activityLevel}${workoutType ? ` (${workoutType})` : ''}
-            - Goal: ${goal}${desiredWeight ? ` → Target: ${desiredWeight}kg` : ''}
-           
+Generate a ${duration}-${durationUnit} ${dietPace}-paced diet plan for a ${patientInfo?.patientData?.age}-year-old ${patientInfo?.patientData?.gender} based on:
+${patientInfo?.patientData?.gender === 'male' ? '♂ Male' : '♀ Female'} Profile:
+- Current Weight: ${weight} kg
+- Height: ${height} cm
+- BMI: ${bmi}
+- Activity Level: ${activityLevel}${workoutType ? ` (${workoutType})` : ''}
+- Goal: ${goal}${desiredWeight ? ` → Target: ${desiredWeight}kg` : ''}
 
-            Nutritional Requirements:
-            - Meals/Day: ${mealQuantity}
-            - Calories/Day: ${calories || 'auto-calculated'}
 
-            - ${exoticAllowed ? 'Includes' : 'Excludes'} exotic ingredients
-            ${budget ? `- Budget: $${budget}/week` : ''}
+Nutritional Requirements:
+- Meals/Day: ${mealQuantity}
+- Calories/Day: ${calories || 'auto-calculated'}
+- ${exoticAllowed ? 'Includes' : 'Excludes'} exotic ingredients
+${budget ? `- Budget: $${budget}/week` : ''}
 
-            Food Preferences:
-            Loved: ${loveProducts.length > 0 ? loveProducts.join(', ') + " (use them often, but not always)" : 'None'}
-            Avoid: ${[...unloveProducts, ...(patientInfo?.allergyData || [])].join(', ') || 'None'}
+Food Preferences:
+Loved: ${loveProducts.length > 0 ? loveProducts.join(', ') + " (use them often, but not always)" : 'None'}
+Avoid: ${[...unloveProducts, ...(patientInfo?.allergyData || [])].join(', ') || 'None'}
 
-            Health Considerations:
-            ${patientInfo?.conditionData?.map(c => `- ${c.name} (${c.status})`).join('\n') || '- No significant medical conditions'}
-            ${patientInfo?.medicationData?.length > 0 ? `Current Medications:\n${patientInfo.medicationData.map(m => `${m.name} ${m.dose}${m.doseUnit}`).join('\n')}` : ''}
+Health Considerations:
+${patientInfo?.conditionData?.map(c => `- ${c.name} (${c.status})`).join('\n') || '- No significant medical conditions'}
+${patientInfo?.medicationData?.length > 0 ? `Current Medications:\n${patientInfo.medicationData.map(m => `${m.name} ${m.dose}${m.doseUnit}`).join('\n')}` : ''}
 
-            ${(patientInfo?.measureData?.systolicBP || patientInfo?.measureData?.diastolicBP) ? `
-            Vital Signs:
-            ${patientInfo?.measureData?.systolicBP ? `- Systolic BP: ${patientInfo.measureData.systolicBP}` : ''}
-            ${patientInfo?.measureData?.diastolicBP ? `- Diastolic BP: ${patientInfo.measureData.diastolicBP}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.fastingGlucose || patientInfo?.measureData?.hbA1c) ? `
-            Diabetes Management:
-            ${patientInfo?.measureData?.fastingGlucose ? `- Fasting Glucose: ${patientInfo.measureData.fastingGlucose}` : ''}
-            ${patientInfo?.measureData?.hbA1c ? `- HbA1c: ${patientInfo.measureData.hbA1c}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.ldl || patientInfo?.measureData?.hdl || patientInfo?.measureData?.triglycerides) ? `
-            Lipid Profile:
-            ${patientInfo?.measureData?.ldl ? `- LDL Cholesterol: ${patientInfo.measureData.ldl}` : ''}
-            ${patientInfo?.measureData?.hdl ? `- HDL Cholesterol: ${patientInfo.measureData.hdl}` : ''}
-            ${patientInfo?.measureData?.triglycerides ? `- Triglycerides: ${patientInfo.measureData.triglycerides}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.creatinine || patientInfo?.measureData?.bun || patientInfo?.measureData?.egfr) ? `
-            Kidney Function:
-            ${patientInfo?.measureData?.creatinine ? `- Creatinine: ${patientInfo.measureData.creatinine}` : ''}
-            ${patientInfo?.measureData?.bun ? `- BUN: ${patientInfo.measureData.bun}` : ''}
-            ${patientInfo?.measureData?.egfr ? `- eGFR: ${patientInfo.measureData.egfr}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.sodium || patientInfo?.measureData?.potassium) ? `
-            Electrolytes:
-            ${patientInfo?.measureData?.sodium ? `- Sodium: ${patientInfo.measureData.sodium}` : ''}
-            ${patientInfo?.measureData?.potassium ? `- Potassium: ${patientInfo.measureData.potassium}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.alt || patientInfo?.measureData?.ast) ? `
-            Liver Function:
-            ${patientInfo?.measureData?.alt ? `- ALT: ${patientInfo.measureData.alt}` : ''}
-            ${patientInfo?.measureData?.ast ? `- AST: ${patientInfo.measureData.ast}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.albumin || patientInfo?.measureData?.prealbumin || patientInfo?.measureData?.inr) ? `
-            Nutritional Status:
-            ${patientInfo?.measureData?.albumin ? `- Albumin: ${patientInfo.measureData.albumin}` : ''}
-            ${patientInfo?.measureData?.prealbumin ? `- Prealbumin: ${patientInfo.measureData.prealbumin}` : ''}
-            ${patientInfo?.measureData?.inr ? `- INR: ${patientInfo.measureData.inr}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.vitaminD || patientInfo?.measureData?.vitaminB12 || patientInfo?.measureData?.ironStudies) ? `
-            Nutritional Markers:
-            ${patientInfo?.measureData?.vitaminD ? `- Vitamin D: ${patientInfo.measureData.vitaminD}` : ''}
-            ${patientInfo?.measureData?.vitaminB12 ? `- Vitamin B12: ${patientInfo.measureData.vitaminB12}` : ''}
-            ${patientInfo?.measureData?.ironStudies ? `- Iron Studies: ${patientInfo.measureData.ironStudies}` : ''}
-            ` : ''}
-             
-            ${(patientInfo?.measureData?.pregnancyStatus || patientInfo?.measureData?.swallowingStatus || patientInfo?.measureData?.fluidIntake || patientInfo?.measureData?.urineOutput || patientInfo?.measureData?.ree) ? `
-            Special Considerations:
-            ${patientInfo?.measureData?.pregnancyStatus ? `- Pregnancy Status: ${patientInfo.measureData.pregnancyStatus}` : ''}
-            ${patientInfo?.measureData?.swallowingStatus ? `- Swallowing Status: ${patientInfo.measureData.swallowingStatus}` : ''}
-            ${patientInfo?.measureData?.fluidIntake ? `- Fluid Intake: ${patientInfo.measureData.fluidIntake}` : ''}
-            ${patientInfo?.measureData?.urineOutput ? `- Urine Output: ${patientInfo.measureData.urineOutput}` : ''}
-            ${patientInfo?.measureData?.ree ? `- Resting Energy Expenditure: ${patientInfo.measureData.ree}` : ''}
-            ` : ''}
+${(patientInfo?.measureData?.systolicBP || patientInfo?.measureData?.diastolicBP) ? `
+Vital Signs:
+${patientInfo?.measureData?.systolicBP ? `- Systolic BP: ${patientInfo.measureData.systolicBP}` : ''}
+${patientInfo?.measureData?.diastolicBP ? `- Diastolic BP: ${patientInfo.measureData.diastolicBP}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.fastingGlucose || patientInfo?.measureData?.hbA1c) ? `
+Diabetes Management:
+${patientInfo?.measureData?.fastingGlucose ? `- Fasting Glucose: ${patientInfo.measureData.fastingGlucose}` : ''}
+${patientInfo?.measureData?.hbA1c ? `- HbA1c: ${patientInfo.measureData.hbA1c}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.ldl || patientInfo?.measureData?.hdl || patientInfo?.measureData?.triglycerides) ? `
+Lipid Profile:
+${patientInfo?.measureData?.ldl ? `- LDL Cholesterol: ${patientInfo.measureData.ldl}` : ''}
+${patientInfo?.measureData?.hdl ? `- HDL Cholesterol: ${patientInfo.measureData.hdl}` : ''}
+${patientInfo?.measureData?.triglycerides ? `- Triglycerides: ${patientInfo.measureData.triglycerides}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.creatinine || patientInfo?.measureData?.bun || patientInfo?.measureData?.egfr) ? `
+Kidney Function:
+${patientInfo?.measureData?.creatinine ? `- Creatinine: ${patientInfo.measureData.creatinine}` : ''}
+${patientInfo?.measureData?.bun ? `- BUN: ${patientInfo.measureData.bun}` : ''}
+${patientInfo?.measureData?.egfr ? `- eGFR: ${patientInfo.measureData.egfr}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.sodium || patientInfo?.measureData?.potassium) ? `
+Electrolytes:
+${patientInfo?.measureData?.sodium ? `- Sodium: ${patientInfo.measureData.sodium}` : ''}
+${patientInfo?.measureData?.potassium ? `- Potassium: ${patientInfo.measureData.potassium}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.alt || patientInfo?.measureData?.ast) ? `
+Liver Function:
+${patientInfo?.measureData?.alt ? `- ALT: ${patientInfo.measureData.alt}` : ''}
+${patientInfo?.measureData?.ast ? `- AST: ${patientInfo.measureData.ast}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.albumin || patientInfo?.measureData?.prealbumin || patientInfo?.measureData?.inr) ? `
+Nutritional Status:
+${patientInfo?.measureData?.albumin ? `- Albumin: ${patientInfo.measureData.albumin}` : ''}
+${patientInfo?.measureData?.prealbumin ? `- Prealbumin: ${patientInfo.measureData.prealbumin}` : ''}
+${patientInfo?.measureData?.inr ? `- INR: ${patientInfo.measureData.inr}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.vitaminD || patientInfo?.measureData?.vitaminB12 || patientInfo?.measureData?.ironStudies) ? `
+Nutritional Markers:
+${patientInfo?.measureData?.vitaminD ? `- Vitamin D: ${patientInfo.measureData.vitaminD}` : ''}
+${patientInfo?.measureData?.vitaminB12 ? `- Vitamin B12: ${patientInfo.measureData.vitaminB12}` : ''}
+${patientInfo?.measureData?.ironStudies ? `- Iron Studies: ${patientInfo.measureData.ironStudies}` : ''}
+` : ''}
+    
+${(patientInfo?.measureData?.pregnancyStatus || patientInfo?.measureData?.swallowingStatus || patientInfo?.measureData?.fluidIntake || patientInfo?.measureData?.urineOutput || patientInfo?.measureData?.ree) ? `
+Special Considerations:
+${patientInfo?.measureData?.pregnancyStatus ? `- Pregnancy Status: ${patientInfo.measureData.pregnancyStatus}` : ''}
+${patientInfo?.measureData?.swallowingStatus ? `- Swallowing Status: ${patientInfo.measureData.swallowingStatus}` : ''}
+${patientInfo?.measureData?.fluidIntake ? `- Fluid Intake: ${patientInfo.measureData.fluidIntake}` : ''}
+${patientInfo?.measureData?.urineOutput ? `- Urine Output: ${patientInfo.measureData.urineOutput}` : ''}
+${patientInfo?.measureData?.ree ? `- Resting Energy Expenditure: ${patientInfo.measureData.ree}` : ''}
+` : ''}
 
-            ${patientInfo?.dietData?.length > 0 ? `
-            Current Diet Orders:
-            ${patientInfo?.dietData?.map(diet => `
-            ${(diet.orderType || diet.dietName || diet.instruction || diet.dateTime) ? `
-            Order Details:
-            ${diet.orderType ? `- Type: ${diet.orderType}` : ''}
-            ${diet.dietName ? `- Name: ${diet.dietName}` : ''}
-            ${diet.instruction ? `- Instructions: ${diet.instruction}` : ''}
-            ${diet.dateTime ? `- Date: ${new Date(diet.dateTime).toLocaleDateString()}` : ''}
-            ` : ''}
-            
-            ${(diet.oralDiet || diet.supplement || diet.enteralFormula) ? `
-            Specifications:
-            ${diet.oralDiet ? `- Oral Diet: ${JSON.stringify(diet.oralDiet)}` : ''}
-            ${diet.supplement ? `- Supplements: ${JSON.stringify(diet.supplement)}` : ''}
-            ${diet.enteralFormula ? `- Enteral Formula: ${JSON.stringify(diet.enteralFormula)}` : ''}
-            ` : ''}
-            
-            ${(diet.scheduledTime || diet.intakeType) ? `
-            Administration:
-            ${diet.scheduledTime ? `- Schedule: ${diet.scheduledTime}` : ''}
-            ${diet.intakeType ? `- Type: ${diet.intakeType}` : ''}
-            ` : ''}
-            
-            ${diet.patientInstruction ? `
-            Patient Instructions:
-            ${diet.patientInstruction}
-            ` : ''}
-            `).join('\n\n')}
-            ` : ''}
+${patientInfo?.dietData?.length > 0 ? `
+Current Diet Orders:
+${patientInfo?.dietData?.map(diet => `
+${(diet.orderType || diet.dietName || diet.instruction || diet.dateTime) ? `
+Order Details:
+${diet.orderType ? `- Type: ${diet.orderType}` : ''}
+${diet.dietName ? `- Name: ${diet.dietName}` : ''}
+${diet.instruction ? `- Instructions: ${diet.instruction}` : ''}
+${diet.dateTime ? `- Date: ${new Date(diet.dateTime).toLocaleDateString()}` : ''}
+` : ''}
 
-            Special Requirements:
-            ${restrictions.length > 0 ? `- ${restrictions.join('\n- ')}` : '- None'}
+${(diet.oralDiet || diet.supplement || diet.enteralFormula) ? `
+Specifications:
+${diet.oralDiet ? `- Oral Diet: ${JSON.stringify(diet.oralDiet)}` : ''}
+${diet.supplement ? `- Supplements: ${JSON.stringify(diet.supplement)}` : ''}
+${diet.enteralFormula ? `- Enteral Formula: ${JSON.stringify(diet.enteralFormula)}` : ''}
+` : ''}
 
-            Please provide:
-            1. Exact gram measurements for all portions
-            2. Calorie estimates per meal
-            3. Insulin dosing recommendations${patientInfo?.medicationData?.some(m => m.name.toLowerCase().includes('insulin')) ? ' (adjust for current insulin regimen)' : ''}
-            4. Macronutrient breakdown (carbs/protein/fat)
-            5. Grocery list with budget considerations
-            6. Meal prep instructions for ${timePreparation} minutes
-            `;
+${(diet.scheduledTime || diet.intakeType) ? `
+Administration:
+${diet.scheduledTime ? `- Schedule: ${diet.scheduledTime}` : ''}
+${diet.intakeType ? `- Type: ${diet.intakeType}` : ''}
+` : ''}
+
+${diet.patientInstruction ? `
+Patient Instructions:
+${diet.patientInstruction}
+` : ''}
+`).join('\n\n')}
+` : ''}
+
+Special Requirements:
+${restrictions.length > 0 ? `- ${restrictions.join('\n- ')}` : '- None'}
+
+Please provide:
+1. Exact gram measurements for all portions
+2. Calorie estimates per meal
+3. Insulin dosing recommendations${patientInfo?.medicationData?.some(m => m.name.toLowerCase().includes('insulin')) ? ' (adjust for current insulin regimen)' : ''}
+4. Macronutrient breakdown (carbs/protein/fat)
+5. Grocery list with budget considerations
+6. Meal prep instructions for ${timePreparation} minutes
+`;
             const handleGenerateDiet = async () => {
                 setIsLoadingDiet(true);
                 setError(null);
+                const formatedDietDescription = dietDescription.split("\n").filter(line => line.trim()).join("\n");
                 
                 try {
                   const response = await fetch('/api/generate-diet', {
@@ -451,14 +451,14 @@ export default function Page(props: IPageProps) {
                     headers: {
                       'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ dietDescription }),
+                    body: JSON.stringify({ dietDescription: formatedDietDescription }),
                   });
               
                   if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                   }
                   
-                  setAiRequest(dietDescription);
+                  setAiRequest(formatedDietDescription);
                   const data = await response.json();
                   setDietPlan(data);
                 } catch (err) {
