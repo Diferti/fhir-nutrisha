@@ -7,6 +7,7 @@ import { AppContext } from "@/lib/hooks/AppContext/AppContext";
 import { ImageError } from "next/dist/server/image-optimizer";
 import getPatientInfo from "./getPatient"
 import { generateDietPrompt } from "./generateDietPrompt";
+import { Navbar } from "@/app/components/Navbar";
 
 export interface IPageProps { }
 export default function Page(props: IPageProps) {
@@ -202,6 +203,7 @@ export default function Page(props: IPageProps) {
 
     return (
         <div className="p-8">
+            <Navbar />
             <Head><title>Patient Details</title></Head>
             {isLoading && <div>Loading...</div>}
 

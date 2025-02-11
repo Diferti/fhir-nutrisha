@@ -2,12 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.light {
+    --primary: 30 146 42;
+    --secondary: 70 70 70;
+    --thirdary: 92 92 92;
+    --background: 245 245 245;
+    --shadow: 0 0 0;
+    --pageColor: 255 255 255;
+}
+
+.dark {
+    --primary: 30 146 42;
+    --secondary: 226 225 228;
+    --thirdary: 138 144 153;
+    --background: 49 51 56;
+    --shadow: 0 0 0;
+    --pageColor: 43 45 49;
 }

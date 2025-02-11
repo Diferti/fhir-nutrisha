@@ -7,7 +7,19 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: { },
+    extend: {
+      colors: {
+        primary: "rgb(var(--primary))",
+        secondary: "rgb(var(--secondary))",
+        background: "rgb(var(--background))",
+        shadow: "rgb(var(--shadow))",
+        pageColor: "rgb(var(--pageColor))",
+      },
+      fontFamily: {
+        fontHeader: ['"Lily Script One"', 'serif'],
+        fontMain: ['"Andada Pro"', 'serif'],
+      },
+    },
   },
   plugins: [],
 }
