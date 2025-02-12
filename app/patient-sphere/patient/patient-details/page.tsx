@@ -8,6 +8,8 @@ import { ImageError } from "next/dist/server/image-optimizer";
 import getPatientInfo from "./getPatient"
 import { generateDietPrompt } from "./generateDietPrompt";
 import { Navbar } from "@/app/components/Navbar";
+import { PageHolder } from "@/app/components/PageHolder";
+import { HomePage, GenerateDietPage, AnalyzeFoodPage} from "@/app/components/pages/index";
 
 export interface IPageProps { }
 export default function Page(props: IPageProps) {
@@ -202,8 +204,10 @@ export default function Page(props: IPageProps) {
               };
 
     return (
-        <div className="p-8">
+        <div>
+
             <Navbar />
+            <PageHolder />
             <Head><title>Patient Details</title></Head>
             {isLoading && <div>Loading...</div>}
 

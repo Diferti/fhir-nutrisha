@@ -16,7 +16,7 @@ const config: Config = {
         pageColor: "rgb(var(--pageColor))",
       },
       fontFamily: {
-        fontHeader: ['"Lily Script One"', 'serif'],
+        fontHeader: ['"Alegreya SC"', 'serif'],
         fontMain: ['"Andada Pro"', 'serif'],
       },
     },
