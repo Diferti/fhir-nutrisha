@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         primary: "rgb(var(--primary))",
         secondary: "rgb(var(--secondary))",
+        thirdary: "rgb(var(--thirdary))",
         background: "rgb(var(--background))",
         shadow: "rgb(var(--shadow))",
         pageColor: "rgb(var(--pageColor))",
