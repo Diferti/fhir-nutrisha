@@ -19,6 +19,9 @@ const config: Config = {
         fontHeader: ['"Alegreya SC"', 'serif'],
         fontMain: ['"Andada Pro"', 'serif'],
       },
+      screens: {
+        '2k': '2000px',
+      },
     },
   },
   plugins: [],

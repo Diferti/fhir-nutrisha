@@ -19,8 +19,7 @@ function Header({ title, iconType, isActive, onClick, className }) {
     );
 }
 
-export const Navbar = () => {
-    const [selected, setSelected] = useState(0);
+export const Navbar = ({ selectedPage, onSelect }) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
@@ -29,39 +28,42 @@ export const Navbar = () => {
         html.classList.add(isDarkMode ? 'dark' : 'light');
     }, [isDarkMode]);
 
-    const toggleTheme = () => setIsDarkMode(!isDarkMode);
-
-    const headerClick = (index) => setSelected(index);
+    const switchMode = () => setIsDarkMode(!isDarkMode);
 
     return (
-        <nav className="fixed bottom-[10px] left-[10px] right-[10px] h-[85px] bg-background
-            border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.5)]
-            z-50 w-auto p-2 gap-1 flex items-stretch font-fontHeader
-            md:left-[50px] md:top-[100px] md:bottom-[100px] md:w-[100px] md:p-4 md:flex-col md:gap-3 md:h-auto">
+        <nav className="fixed z-50 bg-background border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.5)]
+                /* Mobile */
+                bottom-[10px] left-[10px] right-[10px] h-[85px] p-2 gap-1 flex items-stretch font-fontHeader
+                /* 768px+ */
+                md:left-[50px] md:top-[50px] md:bottom-[50px] md:h-auto md:w-[90px] md:p-3 md:flex-col md:gap-2
+                /* 1280px+ */
+                xl:left-[80px] xl:top-[80px] xl:bottom-[80px] xl:w-[100px]
+                /* 2000px+ */
+                2k:left-[100px] 2k:top-[100px] 2k:bottom-[100px] 2k:w-[100px]">
             <Header
                 title="Home"
                 iconType="home"
-                isActive={selected === 0}
-                onClick={() => headerClick(0)}
+                isActive={selectedPage === 0}
+                onClick={() => onSelect(0)}
                 className="flex-1 md:flex-none"
             />
             <Header
                 title={<>Generate<span className="hidden md:inline"> Diet</span></>}
                 iconType="diet"
-                isActive={selected === 1}
-                onClick={() => headerClick(1)}
+                isActive={selectedPage === 1}
+                onClick={() => onSelect(1)}
                 className="flex-1 md:flex-none"
             />
             <Header
                 title={<>Analyze<span className="hidden md:inline"> Food</span></>}
                 iconType="analyze"
-                isActive={selected === 2}
-                onClick={() => headerClick(2)}
+                isActive={selectedPage === 2}
+                onClick={() => onSelect(2)}
                 className="flex-1 md:flex-none"
             />
 
             <button
-                onClick={toggleTheme}
+                onClick={switchMode}
                 className="flex-1 flex flex-col items-center justify-center text-secondary md:flex-none md:mt-auto">
                <span className="text-lg">
                    {isDarkMode

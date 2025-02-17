@@ -52,6 +52,9 @@ export default function Page(props: IPageProps) {
     const [isLoadingImage, setIsLoadingImage] = useState(false);
     const [imageError, setImageError] = useState<string | null>(null);
     const [imageAnalysis, setImageAnalysis] = useState<any>(null);
+
+    const [selectedPage, setSelectedPage] = useState(0);
+    //const PatientContext = createContext<PatientInfo | null>(null);
     
 
     useEffect(() => {
@@ -203,11 +206,24 @@ export default function Page(props: IPageProps) {
                 }
               };
 
+              const renderPage = () => {
+                switch(selectedPage) {
+                  case 0: return <HomePage patientInfo={patientInfo}/>;
+                  case 1: return <GenerateDietPage />;
+                  case 2: return <AnalyzeFoodPage />;
+                  default: return <HomePage patientInfo={patientInfo}/>;
+                }
+              };
+
     return (
         <div>
-
-            <Navbar />
-            <PageHolder />
+            {/* <PatientContext.Provider value={patientInfo}> */}
+                <Navbar selectedPage={selectedPage} onSelect={setSelectedPage}/>
+                <PageHolder>
+                    {renderPage()}
+                </PageHolder>
+            {/* </PatientContext.Provider> */}
+            
             <Head><title>Patient Details</title></Head>
             {isLoading && <div>Loading...</div>}
 
