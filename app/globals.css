@@ -19,3 +19,29 @@
     --shadow: 0 0 0;
     --pageColor: 43 45 49;
 }
+
+::-webkit-scrollbar {
+    width: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(var(--background));
+    border-radius: 15px;
+    border: 1px solid rgb(var(--primary));
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(var(--primary)/0.5);
+    border-radius: 15px;
+    border: 1px solid rgb(var(--primary));
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--primary));
+}
