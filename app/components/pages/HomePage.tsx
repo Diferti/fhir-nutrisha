@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-export const HomePage = ({ patientInfo }: { patientInfo: any }) => {
+export const HomePage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
   return (
     <div className="min-h-[calc(100vh-200px)]">
       <div className="text-center pt-[20px] px-[10px]">
@@ -13,7 +13,12 @@ export const HomePage = ({ patientInfo }: { patientInfo: any }) => {
             </span>
           </h1>
           <div className="relative w-64 h-36 mx-auto mt-[10px]">
-            <Image src="/images/nutrisha-images/nutrisha-logo.png" alt="Nutrisha AI Nutritionist" layout="responsive"
+            <Image src={
+                isDarkMode
+                  ? "/images/nutrisha-images/nutrisha-logo-dark.png"
+                  : "/images/nutrisha-images/nutrisha-logo.png"
+              } 
+              alt="Nutrisha AI Nutritionist" layout="responsive"
               width={800} height={450} quality={100} className="object-contain" priority/>
           </div>
           <p className="text-xl text-primary/50 font-fontMain sm:text-2xl md:text-3xl mt-[60px] max-w-2xl mx-auto">

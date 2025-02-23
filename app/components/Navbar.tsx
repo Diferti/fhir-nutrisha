@@ -19,9 +19,8 @@ function Header({ title, iconType, isActive, onClick, className }) {
     );
 }
 
-export const Navbar = ({ selectedPage, onSelect }) => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
+export const Navbar = ({ selectedPage, onSelect, isDarkMode, setIsDarkMode }) => {
+    
     useEffect(() => {
         const html = document.documentElement;
         html.classList.remove(isDarkMode ? 'light' : 'dark');

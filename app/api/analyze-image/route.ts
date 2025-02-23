@@ -10,27 +10,13 @@ export async function POST(request: Request) {
     try {
          const formData = await request.formData();
          const imageFile = formData.get('image') as File;
-         const userData = JSON.parse(formData.get('userData') as string);
+         const systemPrompt = formData.get('systemPrompt') as string;
  
          const buffer = await imageFile.arrayBuffer();
          const base64Image = Buffer.from(buffer).toString('base64');
          const imageUrl = `data:${imageFile.type};base64,${base64Image}`;
  
-         const systemPrompt = `
-         Analyze this meal image and provide:
-         
-         1. Detailed nutritional breakdown (carbs, proteins, fats, calories)
-         2. Food items identification with portion estimates
-         3. Insulin calculation using these parameters:
-            - Current BG: ${userData.currentBG} mg/dL
-            - Target BG: ${userData.targetBG} mg/dL
-            - Insulin-to-Carb Ratio: 1:${userData.carbRatio}
-            - Insulin Sensitivity: ${userData.sensitivity} mg/dL per unit
-         4. Meal balance assessment and suggestions
-         Include confidence levels for each identification (0-100%)
-         Include metric units and safety disclaimers.
-         `;
-        const completion = await client.chat.completions.create({
+         const completion = await client.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
                 { 
@@ -47,8 +33,118 @@ export async function POST(request: Request) {
                     ] 
                 },
             ],
+            response_format: {
+                type: "json_schema",
+                json_schema: {
+                  name: "mealAnalysis",
+                  schema: {
+                    type: "object",
+                    properties: {
+                      nutritionalBreakdown: {
+                        type: "object",
+                        properties: {
+                          carbs: { type: "number", description: "Total carbohydrates in grams" },
+                          proteins: { type: "number" },
+                          fats: { type: "number" },
+                          fiber: { type: "number" },
+                          calories: { type: "number" },
+                          micronutrients: {
+                            type: "array",
+                            items: { 
+                              type: "string",
+                              enum: ["Iron", "Vitamin C", "Calcium", "Vitamin D", "Potassium"]
+                            }
+                          }
+                        },
+                        required: ["carbs", "proteins", "fats", "calories"]
+                      },
+                      identifiedItems: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            name: { type: "string" },
+                            weightG: { type: "number" },
+                            volumeML: { type: ["number", "null"] },
+                            confidence: { 
+                              type: "number",
+                              minimum: 0,
+                              maximum: 100
+                            },
+                            allergens: {
+                              type: "array",
+                              items: { 
+                                type: "string",
+                                enum: ["Gluten", "Nuts", "Dairy", "Shellfish", "Eggs"]
+                              }
+                            }
+                          },
+                          required: ["name", "confidence"]
+                        }
+                      },
+                      insulinRecommendation: {
+                        type: "object",
+                        properties: {
+                          requiredParameters: {
+                            type: "array",
+                            items: { 
+                              type: "string",
+                              enum: ["carbRatio", "currentBloodGlucose"]
+                            }
+                          },
+                          calculatedDose: { type: ["number", "null"] },
+                          timingAdvice: { type: "string" }
+                        }
+                      },
+                      mealAssessment: {
+                        type: "object",
+                        properties: {
+                          balanceScore: { 
+                            type: "number",
+                            minimum: 0,
+                            maximum: 100
+                          },
+                          suggestions: {
+                            type: "array",
+                            items: { type: "string" }
+                          },
+                          warnings: {
+                            type: "array",
+                            items: { 
+                              type: "string",
+                              enum: ["High Sodium", "Low Fiber", "Excess Saturated Fats"]
+                            }
+                          }
+                        },
+                        required: ["balanceScore", "suggestions"]
+                      },
+                      confidenceNotes: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      disclaimers: {
+                        type: "array",
+                        items: { 
+                          type: "string",
+                          enum: [
+                            "Consult healthcare professional before dietary changes",
+                            "Accuracy range ±15%",
+                            "Not a substitute for medical advice"
+                          ]
+                        }
+                      }
+                    },
+                    required: [
+                      "nutritionalBreakdown",
+                      "identifiedItems",
+                      "mealAssessment",
+                      "disclaimers"
+                    ]
+                  }
+                }
+              },
         });
-        return Response.json({ chat: completion.choices[0].message.content });
+        return Response.json(JSON.parse(completion.choices[0].message.content));
     } catch (error) {
         console.error('Error analyzing image:', error);
         return Response.json({ error: 'Failed to analyze image' }, { status: 500 });

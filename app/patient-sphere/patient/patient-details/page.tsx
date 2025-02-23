@@ -6,7 +6,8 @@ import Head from "next/head";
 import { AppContext } from "@/lib/hooks/AppContext/AppContext";
 import { ImageError } from "next/dist/server/image-optimizer";
 import getPatientInfo from "./getPatient"
-import { generateDietPrompt } from "./generateDietPrompt";
+import { generateDietPrompt } from "./prompts/generateDietPrompt";
+import { analyzeFoodPrompt } from "./prompts/analyzeFoodPrompt";
 import { Navbar } from "@/app/components/Navbar";
 import { PageHolder } from "@/app/components/PageHolder";
 import { HomePage, GenerateDietPage, AnalyzeFoodPage} from "@/app/components/pages/index";
@@ -54,6 +55,7 @@ export default function Page(props: IPageProps) {
     const [imageAnalysis, setImageAnalysis] = useState<any>(null);
 
     const [selectedPage, setSelectedPage] = useState(0);
+    const [isDarkMode, setIsDarkMode] = useState(false);
     //const PatientContext = createContext<PatientInfo | null>(null);
     
 
@@ -175,17 +177,12 @@ export default function Page(props: IPageProps) {
               const imageSender = async () => {
                 setIsLoadingImage(true);
                 setImageError(null);
-                const userData = {
-                    currentBG: 162,
-                    targetBG: 100,
-                    carbRatio: 15,
-                    sensitivity: 50
-                }
+                const analyzePrompt = analyzeFoodPrompt();
      
                 try {
                     const formData = new FormData();
                     formData.append('image', selectedImage);
-                    formData.append('userData', JSON.stringify(userData));
+                    formData.append('systemPrompt', JSON.stringify(analyzePrompt));
 
                     const response = await fetch('/api/analyze-image', {
                         method: 'POST',
@@ -208,17 +205,17 @@ export default function Page(props: IPageProps) {
 
               const renderPage = () => {
                 switch(selectedPage) {
-                  case 0: return <HomePage patientInfo={patientInfo}/>;
+                  case 0: return <HomePage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
                   case 1: return <GenerateDietPage />;
-                  case 2: return <AnalyzeFoodPage />;
-                  default: return <HomePage patientInfo={patientInfo}/>;
+                  case 2: return <AnalyzeFoodPage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
+                  default: return <HomePage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
                 }
               };
 
     return (
         <div>
             {/* <PatientContext.Provider value={patientInfo}> */}
-                <Navbar selectedPage={selectedPage} onSelect={setSelectedPage}/>
+                <Navbar selectedPage={selectedPage} onSelect={setSelectedPage} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}/>
                 <PageHolder>
                     {renderPage()}
                 </PageHolder>

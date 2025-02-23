@@ -1,18 +1,18 @@
 const iconHome = ({ color, width, height }) => (
     <svg width={width || "24"} height={height || "24"}  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22 22L2 22" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M22 22L2 22" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
         <path d="M2 11L10.1259 4.49931C11.2216 3.62279 12.7784 3.62279 13.8741 4.49931L22 11" stroke={color}
-              stroke-width="1.5" stroke-linecap="round"/>
+              strokeWidth="1.5" strokeLinecap="round"/>
         <path d="M15.5 5.5V3.5C15.5 3.22386 15.7239 3 16 3H18.5C18.7761 3 19 3.22386 19 3.5V8.5" stroke={color}
-              stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M4 22V9.5" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M20 22V9.5" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
+              strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M4 22V9.5" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M20 22V9.5" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
         <path
             d="M15 22V17C15 15.5858 15 14.8787 14.5607 14.4393C14.1213 14 13.4142 14 12 14C10.5858 14 9.87868 14 9.43934 14.4393C9 14.8787 9 15.5858 9 17V22"
-            stroke={color} stroke-width="1.5"/>
+            stroke={color} strokeWidth="1.5"/>
         <path
             d="M14 9.5C14 10.6046 13.1046 11.5 12 11.5C10.8954 11.5 10 10.6046 10 9.5C10 8.39543 10.8954 7.5 12 7.5C13.1046 7.5 14 8.39543 14 9.5Z"
-            stroke={color} stroke-width="1.5"/>
+            stroke={color} strokeWidth="1.5"/>
     </svg>
 );
 
@@ -208,25 +208,25 @@ m679 -805 c82 -23 109 -26 186 -21 50 3 122 13 162 21 76 16 133 8 133 -20 0
 
 const iconSun = ({color, width, height}) => (
     <svg width={width || "24"} height={height || "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 22H16" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M5 19H19" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 16H22" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 22H16" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5 19H19" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M2 16H22" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         <path
             d="M12 6C8.68629 6 6 8.68629 6 12C6 13.5217 6.56645 14.911 7.5 15.9687H16.5C17.4335 14.911 18 13.5217 18 12C18 8.68629 15.3137 6 12 6Z"
-            stroke={color} stroke-width="1.5"/>
-        <path d="M12 2V3" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M22 12L21 12" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M3 12L2 12" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M19.0708 4.92969L18.678 5.32252" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M5.32178 5.32227L4.92894 4.92943" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
+            stroke={color} strokeWidth="1.5"/>
+        <path d="M12 2V3" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M22 12L21 12" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M3 12L2 12" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M19.0708 4.92969L18.678 5.32252" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M5.32178 5.32227L4.92894 4.92943" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
 );
 
 const iconMoon = ({color, width, height}) => (
     <svg width={width || "24"} height={height || "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 22H16" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M5 19H19" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 16H22" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 22H16" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5 19H19" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M2 16H22" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         <path
             d="M21.0672 11.8568L20.4253 11.469L21.0672 11.8568ZM12.1432 2.93276L11.7553 2.29085V2.29085L12.1432 2.93276ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75V1.25C6.06294 1.25 1.25 6.06294 1.25 12H2.75ZM15.5 14.25C12.3244 14.25 9.75 11.6756 9.75 8.5H8.25C8.25 12.5041 11.4959 15.75 15.5 15.75V14.25ZM20.4253 11.469C19.4172 13.1373 17.5882 14.25 15.5 14.25V15.75C18.1349 15.75 20.4407 14.3439 21.7092 12.2447L20.4253 11.469ZM9.75 8.5C9.75 6.41182 10.8627 4.5828 12.531 3.57467L11.7553 2.29085C9.65609 3.5593 8.25 5.86509 8.25 8.5H9.75ZM21.25 12C21.25 13.3169 20.9752 14.5677 20.4806 15.6997L21.8552 16.3003C22.431 14.9824 22.75 13.5275 22.75 12H21.25ZM3.51935 15.6997C3.02475 14.5677 2.75 13.3169 2.75 12H1.25C1.25 13.5275 1.56904 14.9824 2.14482 16.3003L3.51935 15.6997ZM12 2.75C11.9115 2.75 11.8077 2.71008 11.7324 2.63168C11.6686 2.56527 11.6538 2.50244 11.6503 2.47703C11.6461 2.44587 11.6482 2.35557 11.7553 2.29085L12.531 3.57467C13.0342 3.27065 13.196 2.71398 13.1368 2.27627C13.0754 1.82126 12.7166 1.25 12 1.25V2.75ZM21.7092 12.2447C21.6444 12.3518 21.5541 12.3539 21.523 12.3497C21.4976 12.3462 21.4347 12.3314 21.3683 12.2676C21.2899 12.1923 21.25 12.0885 21.25 12H22.75C22.75 11.2834 22.1787 10.9246 21.7237 10.8632C21.286 10.804 20.7293 10.9658 20.4253 11.469L21.7092 12.2447Z"
             fill={color}/>
