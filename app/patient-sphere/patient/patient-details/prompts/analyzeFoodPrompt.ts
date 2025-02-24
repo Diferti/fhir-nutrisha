@@ -28,7 +28,7 @@ export const analyzeFoodPrompt = (
   - **Micronutrients**: Highlight key vitamins/minerals (e.g., iron, vitamin C) if detectable.
   
   ### Food Identification 
-  - List all identifiable items (e.g., "grilled chicken", "basmati rice") 
+  - List all identifiable items (e.g., "Grilled chicken", "Basmati rice") 
   - **Portion estimates**: 
     - Weight (grams) per item 
     - Volume (ml) for liquids/sauces
@@ -48,10 +48,13 @@ export const analyzeFoodPrompt = (
   - **Recommendations**:
     - Suggested insulin dose (units)
     - Timing recommendations (pre-meal/post-meal)
+    - Tip with time
   
   ### Meal Balance Assessment
-    - **Healthy score**: 0-100 based
+    - **Healthy score**: 0-100 based on how healthy food
     - **Balance score**: 0-100 based on WHO/National Guidelines
+    - **Variety score**: 0-100 based on Ingredient Diversity
+    - **Portion score**: 0-100 based on Serving Size
   - **Suggestions**:
     ${allergyDisclaimer}
     - Missing food groups (e.g., "add leafy greens")

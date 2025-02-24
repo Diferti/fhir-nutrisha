@@ -94,10 +94,10 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
   const CircularProgress = ({ value, label }) => (
     <div className="relative w-20 h-20">
       <svg className="w-full h-full" viewBox="0 0 100 100">
-        <circle className="text-gray-200" strokeWidth="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+        <circle className="text-white/50" strokeWidth="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
         <circle 
-          className="text-blue-500" 
-          strokeWidth="8" 
+          className="text-primary" 
+          strokeWidth="10" 
           strokeDasharray={`${value * 2.83} 283`}
           strokeLinecap="round"
           stroke="currentColor" 
@@ -108,8 +108,8 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-lg font-bold">{value}%</span>
-        <span className="text-xs text-gray-500">{label}</span>
+        <span className="text-lg text-secondary font-fontMain font-extrabold">{value}%</span>
+        <span className="text-xs text-thirdary font-fontMain font-bold">{label}</span>
       </div>
     </div>
     );
@@ -244,20 +244,20 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
         </div>
 
       {imageAnalysis && (
-        <div className="max-w-6xl mx-auto p-6 space-y-8">
+        <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
           <div className="bg-pageColor p-8 border border-primary rounded-[15px] 
               shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full space-y-4">
-            <h2 className="text-3xl font-extrabold mb-4 text-primary font-fontHeader">Nutritional Breakdown</h2>
+            <h2 className="text-2xl xl:text-3xl font-extrabold mb-4 text-primary font-fontHeader">Nutritional Breakdown</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <StatCard label="Calories" value={imageAnalysis.nutritionalBreakdown.calories || "N/A"} unit="kcal" />
-              <StatCard label="Carbs" value={imageAnalysis.nutritionalBreakdown.macronutrients.carbs || "N/A"} unit="g" />
-              <StatCard label="Proteins" value={imageAnalysis.nutritionalBreakdown.macronutrients.proteins || "N/A"} unit="g" />
-              <StatCard label="Fats" value={imageAnalysis.nutritionalBreakdown.macronutrients.fats || "N/A"} unit="g" />
-              <StatCard label="Fiber" value={imageAnalysis.nutritionalBreakdown.macronutrients.fiber || "N/A"} unit="g" />
+              <StatCard label="Calories" value={imageAnalysis?.nutritionalBreakdown?.calories || "N/A"} unit="kcal" />
+              <StatCard label="Carbs" value={imageAnalysis?.nutritionalBreakdown?.macronutrients?.carbs || "N/A"} unit="g" />
+              <StatCard label="Proteins" value={imageAnalysis?.nutritionalBreakdown?.macronutrients?.proteins || "N/A"} unit="g" />
+              <StatCard label="Fats" value={imageAnalysis?.nutritionalBreakdown?.macronutrients?.fats || "N/A"} unit="g" />
+              <StatCard label="Fiber" value={imageAnalysis?.nutritionalBreakdown?.macronutrients?.fiber || "N/A"} unit="g" />
             <div className="col-span-full">
               <h3 className="text-sm text-secondary font-extrabold font-fontMain mb-2">Micronutrients:</h3>
               <div className="flex flex-wrap gap-2 font-bold font-fontMain">
-                {imageAnalysis.nutritionalBreakdown.micronutrients.map((nutrient, index) => (
+                {imageAnalysis?.nutritionalBreakdown?.micronutrients?.map((nutrient, index) => (
                   <span key={index} className="px-3 py-1 bg-primary text-white rounded-xl text-sm">
                     {nutrient}
                   </span>
@@ -267,41 +267,43 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
           </div>
         </div>
       
-        <div className="bg-primary/50 p-8 border border-primary rounded-[15px] 
+        <div className="bg-primary/50 p-[5px] md:p-8 border border-primary rounded-[15px] 
               shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full space-y-4">
-          <h2 className="text-3xl font-extrabold mb-4 text-secondary font-fontHeader">Identified Items</h2>
+          <h2 className="text-2xl xl:text-3xl font-extrabold mb-4 text-secondary font-fontHeader">Identified Items</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="text-left text-xl border-b border-primary text-secondary font-extrabold font-fontMain">
-                  <th className="pb-2">Product</th>
-                  <th className="pb-2">Weight</th>
-                  <th className="pb-2">Confidence</th>
-                  <th className="pb-2">Allergens</th>
+                <tr className="text-sm xl:text-xl border-y md:border-0 md:border-b w-auto text-center border-primary text-secondary font-extrabold font-fontMain">
+                  <th className="pb-2 border-x border-primary md:border-0">Product</th>
+                  <th className="pb-2 border-x border-primary md:border-0">Weight</th>
+                  <th className="pb-2 border-x border-primary md:border-0">Confidence</th>
+                  <th className="pb-2 border-x border-primary md:border-0">Allergens</th>
                 </tr>
               </thead>
               <tbody>
-                {imageAnalysis.identifiedItems.map((item, index) => (
-                  <tr key={index} className="border-b border-primary text-secondary font-bold font-fontMain">
-                    <td className="py-3">{item.name}</td>
-                    <td className="py-3">{item.weightG}g</td>
-                    <td className="py-3">
-                      <div className="flex items-center">
-                        <div className="w-20 h-[10px] bg-gray-200 border border-secondary rounded-full mr-2">
+                {imageAnalysis?.identifiedItems?.map((item, index) => (
+                  <tr key={index} className="border-b border-primary text-center text-sm xl:text-base text-secondary font-bold font-fontMain">
+                    <td className="py-3 text-left pl-[10px] border-x border-primary md:border-0">{item.name}</td>
+                    <td className="py-3 border-x border-primary md:border-0">{item.weightG}g</td>
+                    <td className="py-3 border-x border-primary md:border-0">
+                      <div className="flex items-center justify-center">
+                        <div className="w-10 xl:w-20 h-[10px] bg-gray-200 border border-secondary rounded-full mr-2">
                           <div 
-                            className="h-[8px] rounded-full bg-green-500" 
+                            className="h-[8px] rounded-full text-center bg-primary" 
                             style={{ width: `${item.confidence}%` }}
                           ></div>
                         </div>
                         <span>{item.confidence}%</span>
                       </div>
                     </td>
-                    <td className="py-3">
-                      {item.allergens.map((allergen, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100 text-sm rounded-full mr-1">
-                          {allergen && allergen != "None detected"?allergen:""}
-                        </span>
-                      ))}
+                    <td className="py-3 text-center border-x border-primary md:border-0">
+                      {item.allergens.map((allergen: any, idx: any) => 
+                        allergen && allergen !== "None detected" ? (
+                          <span key={idx} className="px-1 py-1 mr-[5px] bg-red-800 text-white text-sm rounded-lg">
+                            {allergen}
+                          </span>
+                        ) : null
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -309,67 +311,165 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
             </table>
           </div>
         </div>
+        
+        <div className="bg-pageColor p-[15px] md:p-8 border border-primary rounded-[15px] 
+              shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full space-y-4">
+          <div className="flex items-start gap-4">
+            <div className="bg-primary p-3 rounded-xl shadow-sm">
+              <svg 
+                  className="w-8 h-8 text-white" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24">
+              <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+
+            <div className="flex-1">
+              <h3 className="text-lg xl:text-2xl font-extrabold font-fontHeader text-secondary uppercase tracking-wide mb-2">
+                Insulin Recommendation
+              </h3>
       
-        {/* Recommendations Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Insulin Recommendation */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Insulin Guidance</h2>
-            <div className="space-y-4">
-              <div className="bg-yellow-50 dark:bg-yellow-900 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">Required Parameters:</h3>
-                <ul className="list-disc pl-5">
-                  {imageAnalysis.insulinRecommendation.requiredParameters.map((param, index) => (
-                    <li key={index} className="text-sm">{param}</li>
-                  ))}
-                </ul>
+              <div className="hidden md:flex items-baseline gap-4">
+                <div className="relative">
+                  <span className="text-4xl font-extrabold text-primary font-fontMain">
+                    {imageAnalysis?.insulinRecommendation?.calculatedDose}
+                  </span>
+                  <span className="ml-1 text-lg text-secondary font-fontMain font-bold">units</span>
+          
+                  <div className="absolute -top-2 -right-2">
+                    <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-primary/90 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 bg-pageColor px-3 py-1 rounded-full border border-thirdary">
+                  <svg 
+                      className="w-5 h-5 text-primary" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24">
+                  <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span className="text-sm font-bold font-fontMain text-secondary">
+                    {imageAnalysis?.insulinRecommendation?.timingAdvice}
+                  </span>
+                </div>
               </div>
-              <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900">
-                <p className="font-medium">{imageAnalysis.insulinRecommendation.timingAdvice}</p>
-              </div>
+              <div className="mt-4 hidden md:flex p-3 border-l-4 bg-primary/30 border-primary">
+                <p className="font-bold font-fontMain text-secondary">
+                  <span className="text-lg font-extrabold text-primary font-fontHeader">Tip:</span>
+                  {'  '}{imageAnalysis?.insulinRecommendation?.tip} 
+                </p>
+          </div>
             </div>
           </div>
-      
-          {/* Meal Assessment */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Meal Assessment</h2>
-            <div className="flex gap-4 mb-6">
-              <CircularProgress value={imageAnalysis.mealAssessment.balanceScore} label="Balance" />
-              <CircularProgress value={imageAnalysis.mealAssessment.healthyScore} label="Health" />
+          <div className="flex md:hidden items-baseline gap-4">
+                <div className="relative">
+                  <span className="text-4xl font-extrabold text-primary font-fontMain">
+                    {imageAnalysis?.insulinRecommendation?.calculatedDose}
+                  </span>
+                  <span className="ml-1 text-lg text-secondary font-fontMain font-bold">units</span>
+          
+                  <div className="absolute -top-2 -right-2">
+                    <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-primary/90 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 bg-pageColor px-3 py-1 rounded-full border border-thirdary">
+                  <svg 
+                      className="w-5 h-5 text-primary" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24">
+                  <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span className="text-sm font-bold font-fontMain text-secondary">
+                    {imageAnalysis?.insulinRecommendation?.timingAdvice}
+                  </span>
+                </div>
+              </div>
+          <div className="mt-4 md:hidden flex p-3 border-l-4 bg-primary/30 border-primary">
+                <p className="font-bold font-fontMain text-secondary">
+                  <span className="text-lg font-extrabold text-primary font-fontHeader">Tip:</span>
+                  {'  '}{imageAnalysis?.insulinRecommendation?.tip} 
+                </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-8 items-stretch">
+            <div className="bg-pageColor p-[15px] md:p-8 md:pt-[16px] border border-primary rounded-[15px] 
+                shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full space-y-4">
+              <h2 className="text-2xl xl:text-3xl text-center font-extrabold font-fontHeader mb-4 text-primary">
+                  Meal Assessment
+              </h2>
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="flex flex-col items-center justify-center bg-primary/50 p-[10px] rounded-lg">
+                      <CircularProgress value={imageAnalysis?.mealAssessment?.balanceScore} label="Balance" />
+                      <p className="mt-2 text-base font-fontHeader font-bold text-secondary">Food Group Balance</p>
+                  </div>
+                  <div className="flex flex-col items-center justify-center bg-primary/50 p-[10px] rounded-lg">
+                      <CircularProgress value={imageAnalysis?.mealAssessment?.healthyScore} label="Health" />
+                      <p className="mt-2 text-base font-fontHeader font-bold text-secondary">Nutrition Quality</p>
+                  </div>
+                  <div className="flex flex-col items-center justify-center bg-primary/50 p-[10px] rounded-lg">
+                      <CircularProgress value={imageAnalysis?.mealAssessment?.varietyScore} label="Variety" />
+                      <p className="mt-2 text-base font-fontHeader font-bold text-secondary">Ingredient Diversity</p>
+                  </div>
+                  <div className="flex flex-col items-center justify-center bg-primary/50 p-[10px] rounded-lg">
+                      <CircularProgress value={imageAnalysis?.mealAssessment?.portionScore} label="Portion" />
+                      <p className="mt-2 text-base font-fontHeader font-bold text-secondary">Serving Size</p>
+                  </div>
+               </div>
             </div>
-            <div className="space-y-4">
-              <div className="bg-green-50 dark:bg-green-900 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">Suggestions:</h3>
-                <ul className="list-disc pl-5">
-                  {imageAnalysis.mealAssessment.suggestions.map((suggestion, index) => (
-                    <li key={index}>{suggestion}</li>
+
+            <div className="flex flex-col gap-6 h-full">
+              <div className="bg-green-50/70 p-6 border-2 border-green-200 rounded-[15px] 
+                  shadow-[5px_5px_15px_0px_rgb(var(--shadow)/0.15)] flex-1 relative
+                  transform rotate-1 hover:rotate-0 transition-transform">
+                <div className="absolute top-2 right-2 text-green-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-fontHeader font-bold text-green-800 mb-3">Suggestions</h3>
+                <ul className="list-disc pl-5 space-y-2 font-fontMain">
+                  {imageAnalysis?.mealAssessment?.suggestions.map((suggestion: any, index: any) => (
+                    <li key={index} className="text-sm text-green-700">{suggestion}</li>
                   ))}
                 </ul>
               </div>
-              <div className="bg-red-50 dark:bg-red-900 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">Warnings:</h3>
-                <ul className="list-disc pl-5">
-                  {imageAnalysis.mealAssessment.warnings.map((warning, index) => (
-                    <li key={index}>{warning}</li>
+              <div className="bg-red-50/70 p-6 border-2 border-red-200 rounded-[15px] 
+                  shadow-[5px_5px_15px_0px_rgb(var(--shadow)/0.15)] flex-1 relative
+                  transform -rotate-1 hover:rotate-0 transition-transform">
+                <div className="absolute top-2 right-2 text-red-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-fontHeader font-bold text-red-800 mb-3">Warnings</h3>
+                <ul className="list-disc pl-5 space-y-2 font-fontMain">
+                  {imageAnalysis?.mealAssessment?.warnings.map((warning: any, index: any) => (
+                    <li key={index} className="text-sm text-red-700">{warning}</li>
                   ))}
                 </ul>
               </div>
             </div>
           </div>
         </div>
-      
-        {/* Footer Notes */}
-        <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-          <p>* {imageAnalysis.confidenceNotes[0]}</p>
-          <p>* {imageAnalysis.confidenceNotes[1]}</p>
-          <div className="pt-4 border-t dark:border-gray-700">
-            {imageAnalysis.disclaimers.map((disclaimer, index) => (
-              <p key={index} className="italic">{disclaimer}</p>
-            ))}
-          </div>
-        </div>
-      </div>
-     
       )}
 
         {imageError && (
@@ -386,8 +486,6 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                 </pre>
             </div>
         )}
-    </div>
-
-    
+  </div>
   );
 };

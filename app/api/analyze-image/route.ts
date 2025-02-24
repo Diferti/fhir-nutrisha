@@ -43,15 +43,18 @@ export async function POST(request: Request) {
                       nutritionalBreakdown: {
                         type: "object",
                         properties: {
+                          macronutrients: {
+                            proteins: { type: "number" },
+                            fats: { type: "number" },
+                            fiber: { type: "number" },
+                            calories: { type: "number" },
+                          },
                           carbs: { type: "number", description: "Total carbohydrates in grams" },
-                          proteins: { type: "number" },
-                          fats: { type: "number" },
-                          fiber: { type: "number" },
-                          calories: { type: "number" },
                           micronutrients: {
                             type: "array",
                             items: { 
                               type: "string",
+                              enum: ["Iron", "Vitamin C", "Calcium", "Vitamin D", "Potassium"]
                             }
                           }
                         },
@@ -74,6 +77,7 @@ export async function POST(request: Request) {
                               type: "array",
                               items: { 
                                 type: "string",
+                                enum: ["Gluten", "Nuts", "Dairy", "Shellfish", "Eggs"]
                               }
                             }
                           },
@@ -84,7 +88,8 @@ export async function POST(request: Request) {
                         type: "object",
                         properties: {
                           calculatedDose: { type: ["number", "null"] },
-                          timingAdvice: { type: "string" }
+                          timingAdvice: { type: "string" },
+                          tip: { type: "string" }
                         }
                       },
                       mealAssessment: {
@@ -96,6 +101,16 @@ export async function POST(request: Request) {
                             maximum: 100
                           },
                           healthyScore: { 
+                            type: "number",
+                            minimum: 0,
+                            maximum: 100
+                          },
+                          varietyScore: { 
+                            type: "number",
+                            minimum: 0,
+                            maximum: 100
+                          },
+                          portionScore: { 
                             type: "number",
                             minimum: 0,
                             maximum: 100

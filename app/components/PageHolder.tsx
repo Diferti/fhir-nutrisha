@@ -11,10 +11,9 @@ export const PageHolder = ({ children }: { children: ReactNode }) => {
                 /* 1280px+ */
                 xl:top-[80px] xl:bottom-[80px] xl:left-[230px] xl:right-[245px]
                 /* 2000px+ */
-                2k:top-[100px] 2k:bottom-[100px] 2k:left-[250px] 2k:right-[265px]
-                pr-[15px]">
+                2k:top-[100px] 2k:bottom-[100px] 2k:left-[250px] 2k:right-[265px]">
       <div className="h-full 
-        p-4 md:p-5 xl:p-7 2k:p-10">
+        p-[3px] md:p-5 xl:p-7 2k:p-10">
         {children}
       </div>
     </div>
