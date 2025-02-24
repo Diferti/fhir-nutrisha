@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { analyzeFoodPrompt } from '@/app/patient-sphere/patient/patient-details/prompts/analyzeFoodPrompt';
+import IconSVG from "@/app/components/IconSVG";
 
 export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -115,7 +116,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
     );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[calc(100vh-200px)] bg-background">
       <div className="max-w-6xl mx-auto text-center">
         <h1 className="text-4xl font-bold text-secondary font-fontHeader tracking-tight sm:text-5xl md:text-6xl mb-4">
           Nutrisha Food Analysis
@@ -237,11 +238,21 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
       </main>
 
       <div className="flex justify-center">
-          <button onClick={imageSender}
-            className="w-full max-w-[400px] bg-primary text-white py-3 rounded-lg hover:bg-primary-dark transition-colors">
-            Analyze
-          </button>
-        </div>
+        <button onClick={imageSender} className="flex items-center justify-center gap-2 w-full bg-primary/10
+            border-[3px] border-primary text-secondary rounded-lg hover:bg-primary/50 transition-colors
+            max-w-[400px] mx-auto p-[5px]">
+          <div className="flex-shrink-0">
+            <IconSVG
+                type="logoAnalyze"
+                color="rgb(var(--secondary))"
+                width="120"
+                height="120"/>
+          </div>
+          <span className="text-2xl xl:text-3xl font-extrabold uppercase font-fontHeader">
+            {isLoadingImage ? "Analyzing..." : "Analyze"}
+          </span>
+        </button>
+      </div>
 
       {imageAnalysis && (
         <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
@@ -257,7 +268,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
             <div className="col-span-full">
               <h3 className="text-sm text-secondary font-extrabold font-fontMain mb-2">Micronutrients:</h3>
               <div className="flex flex-wrap gap-2 font-bold font-fontMain">
-                {imageAnalysis?.nutritionalBreakdown?.micronutrients?.map((nutrient, index) => (
+                {imageAnalysis?.nutritionalBreakdown?.micronutrients?.map((nutrient: any, index: any) => (
                   <span key={index} className="px-3 py-1 bg-primary text-white rounded-xl text-sm">
                     {nutrient}
                   </span>
@@ -281,7 +292,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                 </tr>
               </thead>
               <tbody>
-                {imageAnalysis?.identifiedItems?.map((item, index) => (
+                {imageAnalysis?.identifiedItems?.map((item: any, index: any) => (
                   <tr key={index} className="border-b border-primary text-center text-sm xl:text-base text-secondary font-bold font-fontMain">
                     <td className="py-3 text-left pl-[10px] border-x border-primary md:border-0">{item.name}</td>
                     <td className="py-3 border-x border-primary md:border-0">{item.weightG}g</td>
@@ -297,13 +308,16 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                       </div>
                     </td>
                     <td className="py-3 text-center border-x border-primary md:border-0">
-                      {item.allergens.map((allergen: any, idx: any) => 
-                        allergen && allergen !== "None detected" ? (
-                          <span key={idx} className="px-1 py-1 mr-[5px] bg-red-800 text-white text-sm rounded-lg">
-                            {allergen}
-                          </span>
-                        ) : null
-                      )}
+                      <div className="flex flex-col md:flex-row items-center justify-center gap-1">
+                        {item.allergens.map((allergen: any, idx: any) => 
+                          allergen && allergen !== "None detected" && allergen !== "none detected"
+                            && allergen !== "none" && allergen !== "None"? (
+                            <span key={idx} className="px-1 py-1 bg-red-800 text-white text-sm rounded-lg">
+                              {allergen}
+                            </span>
+                          ) : null
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -445,10 +459,10 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-fontHeader font-bold text-green-800 mb-3">Suggestions</h3>
+                <h3 className="text-xl xl:text-2xl font-fontHeader font-extrabold text-green-800 mb-3">Suggestions</h3>
                 <ul className="list-disc pl-5 space-y-2 font-fontMain">
                   {imageAnalysis?.mealAssessment?.suggestions.map((suggestion: any, index: any) => (
-                    <li key={index} className="text-sm text-green-700">{suggestion}</li>
+                    <li key={index} className="text-base text-green-700 font-fontMain">{suggestion}</li>
                   ))}
                 </ul>
               </div>
@@ -460,10 +474,10 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-fontHeader font-bold text-red-800 mb-3">Warnings</h3>
+                <h3 className="text-xl xl:text-1xl font-fontHeader font-extrabold text-red-800 mb-3">Warnings</h3>
                 <ul className="list-disc pl-5 space-y-2 font-fontMain">
                   {imageAnalysis?.mealAssessment?.warnings.map((warning: any, index: any) => (
-                    <li key={index} className="text-sm text-red-700">{warning}</li>
+                    <li key={index} className="text-base text-red-700 font-fontMain">{warning}</li>
                   ))}
                 </ul>
               </div>

@@ -31,7 +31,7 @@ export const HomePage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDark
       <div className="grid md:grid-cols-2 gap-8 mb-[50px]">
         <div className="h-full flex flex-col">
           <div className="bg-pageColor p-8 border border-primary rounded-[15px] 
-              shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.5)] h-full flex flex-col">
+              shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full flex flex-col">
             <h2 className="text-3xl text-secondary font-fontHeader font-bold mb-4 text-center xl:text-start">
               Smart Nutrition Made Simple
             </h2>
@@ -58,7 +58,7 @@ export const HomePage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDark
 
         <div className="h-full flex flex-col"> 
           <div className="bg-pageColor p-8 border border-primary rounded-[15px] 
-              shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.5)] h-full flex flex-col">
+              shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full flex flex-col">
             <h3 className="text-3xl text-secondary font-fontHeader font-bold mb-4 text-center xl:text-start">
               How It Works
             </h3>
@@ -95,7 +95,7 @@ export const HomePage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDark
         </div>
       </div>
 
-      <div className="bg-primary/50 p-8 rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.5)]">
+      <div className="bg-primary/50 p-8 rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
         <h3 className="text-3xl text-secondary font-fontHeader font-extrabold mb-8 text-center">
           Why Choose Nutsrisha?
         </h3>

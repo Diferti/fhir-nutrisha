@@ -44,12 +44,12 @@ export async function POST(request: Request) {
                         type: "object",
                         properties: {
                           macronutrients: {
+                            carbs: { type: "number", description: "Total carbohydrates in grams" },
                             proteins: { type: "number" },
                             fats: { type: "number" },
                             fiber: { type: "number" },
-                            calories: { type: "number" },
                           },
-                          carbs: { type: "number", description: "Total carbohydrates in grams" },
+                          calories: { type: "number" },
                           micronutrients: {
                             type: "array",
                             items: { 
