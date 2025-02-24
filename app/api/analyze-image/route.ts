@@ -52,7 +52,6 @@ export async function POST(request: Request) {
                             type: "array",
                             items: { 
                               type: "string",
-                              enum: ["Iron", "Vitamin C", "Calcium", "Vitamin D", "Potassium"]
                             }
                           }
                         },
@@ -75,7 +74,6 @@ export async function POST(request: Request) {
                               type: "array",
                               items: { 
                                 type: "string",
-                                enum: ["Gluten", "Nuts", "Dairy", "Shellfish", "Eggs"]
                               }
                             }
                           },
@@ -85,13 +83,6 @@ export async function POST(request: Request) {
                       insulinRecommendation: {
                         type: "object",
                         properties: {
-                          requiredParameters: {
-                            type: "array",
-                            items: { 
-                              type: "string",
-                              enum: ["carbRatio", "currentBloodGlucose"]
-                            }
-                          },
                           calculatedDose: { type: ["number", "null"] },
                           timingAdvice: { type: "string" }
                         }
@@ -104,6 +95,11 @@ export async function POST(request: Request) {
                             minimum: 0,
                             maximum: 100
                           },
+                          healthyScore: { 
+                            type: "number",
+                            minimum: 0,
+                            maximum: 100
+                          },
                           suggestions: {
                             type: "array",
                             items: { type: "string" }
@@ -112,7 +108,6 @@ export async function POST(request: Request) {
                             type: "array",
                             items: { 
                               type: "string",
-                              enum: ["High Sodium", "Low Fiber", "Excess Saturated Fats"]
                             }
                           }
                         },
@@ -126,11 +121,6 @@ export async function POST(request: Request) {
                         type: "array",
                         items: { 
                           type: "string",
-                          enum: [
-                            "Consult healthcare professional before dietary changes",
-                            "Accuracy range ±15%",
-                            "Not a substitute for medical advice"
-                          ]
                         }
                       }
                     },

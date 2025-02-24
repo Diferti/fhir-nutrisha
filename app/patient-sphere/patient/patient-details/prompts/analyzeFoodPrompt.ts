@@ -20,7 +20,7 @@ export const analyzeFoodPrompt = (
   
   ### Nutritional Breakdown
   - **Macronutrients**: 
-    - Carbohydrates (g) 
+    - Carbs (g) 
     - Proteins (g) 
     - Fats (g) 
     - Fiber (g)
@@ -37,34 +37,29 @@ export const analyzeFoodPrompt = (
   ### Insulin Calculation
   - **Patient Parameters**:
     - Diabetes Type: ${diabetesParams.diabetesType}
-    - Current Glucose: ${diabetesParams.currentGlucose} mmol/L
-    - Target Glucose: ${diabetesParams.targetGlucose} mmol/L
-    - Insulin Sensitivity: ${diabetesParams.insulinSensitivity} mmol/L per 1 unit
-    - Insulin Ratio: ${diabetesParams.insulinRatio} units/10-12g carbs
-    - Insulin Type: ${diabetesParams.insulinType}
-    - Fasting Blood Sugar: ${diabetesParams.fastingBloodSugar} mmol/L
-    - Hemoglobin A1c: ${diabetesParams.hemoglobinA1c}%
+    ${diabetesParams.fastingBloodSugar ? `- Fasting Blood Sugar: ${diabetesParams.fastingBloodSugar} mmol/L` : ''}
+    ${diabetesParams.hemoglobinA1c ? `- Hemoglobin A1c: ${diabetesParams.hemoglobinA1c}%` : ''}
+    ${diabetesParams.insulinSensitivity ? `- Insulin Sensitivity: ${diabetesParams.insulinSensitivity} mmol/L per 1 unit` : ''}
+    ${diabetesParams.insulinRatio ? `- Insulin Ratio: ${diabetesParams.insulinRatio} units/10-12g carbs` : ''}
+    ${diabetesParams.insulinType ? `- Insulin Type: ${diabetesParams.insulinType}` : ''}
+    ${diabetesParams.currentGlucose ? `- Current Glucose: ${diabetesParams.currentGlucose} mmol/L` : ''}
+    ${diabetesParams.targetGlucose ? `- Target Glucose: ${diabetesParams.targetGlucose} mmol/L` : ''}
+    
   - **Recommendations**:
     - Suggested insulin dose (units)
     - Timing recommendations (pre-meal/post-meal)
-    - Glucose trend prediction based on meal composition
   
   ### Meal Balance Assessment
-  - **Balance score**: 0-100 based on WHO/National Guidelines
+    - **Healthy score**: 0-100 based
+    - **Balance score**: 0-100 based on WHO/National Guidelines
   - **Suggestions**:
-    ${allergyDisclaimer}- Missing food groups (e.g., "add leafy greens")
-    - Excess components (e.g., "reduce saturated fats")
-    - Alternative suggestions for diabetic-friendly substitutions
-    - Glycemic index impact estimation
+    ${allergyDisclaimer}
+    - Missing food groups (e.g., "add leafy greens")
   
   ### Requirements:
   - Use metric units only (grams, milliliters, kcal)
   - Highlight potential allergy conflicts using: ${allergies || 'None detected'}
   - Include safety disclaimers:
-    - "Consult a healthcare professional before making dietary changes"
-    - "Estimates may vary by ±15% due to image quality"
-    - "Not a substitute for medical advice"
-    - "Consider insulin onset/duration for ${diabetesParams.insulinType} insulin"
   - For confidence <70%, add: "Low confidence: verify manually"
   - Flag ingredients with high glycemic index (>70)`;
   };
