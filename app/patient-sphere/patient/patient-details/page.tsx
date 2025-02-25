@@ -206,7 +206,7 @@ export default function Page(props: IPageProps) {
               const renderPage = () => {
                 switch(selectedPage) {
                   case 0: return <HomePage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
-                  case 1: return <GenerateDietPage />;
+                  case 1: return <GenerateDietPage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
                   case 2: return <AnalyzeFoodPage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
                   default: return <HomePage patientInfo={patientInfo} isDarkMode={isDarkMode}/>;
                 }
