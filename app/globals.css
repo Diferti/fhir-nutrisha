@@ -43,3 +43,80 @@
 ::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--primary));
 }
+
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid rgb(var(--primary)/0.5);
+    border-radius: 0.5rem;
+    background-color: rgb(var(--pageColor));
+    color: rgb(var(--secondary));
+    font-family: "Andada Pro", sans-serif;
+    font-size: 14px;
+    transition: all 0.1s ease-in-out;
+}
+  
+.form-input::placeholder {
+    color: rgba(var(--thirdary)/0.5);
+    font-family: "Andada Pro", sans-serif;
+}
+  
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7280'%3E%3Cpath d='M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em;
+}
+  
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border: 2px solid rgb(var(--primary));
+}
+  
+.form-input:hover,
+.form-select:hover {
+    border-color: rgba(var(--primary)) !important;
+}
+
+.form-select option {
+    color: rgb(var(--secondary));
+    background-color: rgb(var(--pageColor));
+    padding: 0.5rem 1rem;
+    font-family: "Andada Pro", sans-serif;
+    font-size: 14px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.form-select option:hover {
+    background-color: rgb(var(--primary)) !important;
+    color: rgb(var(--primary)) !important;
+}
+
+.form-select option:checked,
+.form-select option:focus {
+    background-color: rgb(var(--primary)/0.5) !important;
+    color: rgb(var(--secondary)) !important;
+    font-weight: 500;
+}
+
+.form-select::-webkit-scrollbar {
+    width: 8px;
+    background-color: rgb(var(--pageColor));
+}
+
+.form-select::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--primary) / 0.4);
+    border-radius: 4px;
+}
+
+.form-select::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--primary));
+}
+  
+  

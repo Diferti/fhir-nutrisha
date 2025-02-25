@@ -83,7 +83,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
     }
   };
 
-  const StatCard = ({ label, value, unit }) => (
+  const StatCard = ({ label, value, unit } : { label: any, value: any, unit: any }) => (
     <div className="bg-primary/50 p-4 rounded-lg">
       <div className="text-sm text-secondary font-bold font-fontMain">{label}</div>
       <div className="text-2xl text-secondary font-extrabold font-fontMain">
@@ -92,7 +92,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
     </div>
   );
   
-  const CircularProgress = ({ value, label }) => (
+  const CircularProgress = ({ value, label } : { value: any, label: any}) => (
     <div className="relative w-20 h-20">
       <svg className="w-full h-full" viewBox="0 0 100 100">
         <circle className="text-white/50" strokeWidth="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
@@ -125,6 +125,12 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
           Upload food images for instant nutritional analysis
         </p>
       </div>
+
+      {imageError && (
+            <div className="max-w-6xl mx-auto px-4 mt-4 p-4 bg-red-100 text-red-700 rounded">
+                Error: {imageError}
+            </div>
+      )}
 
       <main className="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 items-stretch">
         <section className="flex-1">
@@ -179,59 +185,61 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
               <div>
                 <label className="block text-sm mb-1">Diabetes Type</label>
                 <select value={diabetesType} onChange={(e) => setDiabetesType(e.target.value)}
-                  className="w-full p-2 border rounded-md">
+                  className="w-full p-2 border rounded-md form-select">
                   <option value="1">Type 1</option>
                   <option value="2">Type 2</option>
+                  <option value="3">Gestational</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm mb-1">Blood sugar after fasting (mmol/L)</label>
                 <input type="number" value={fastingBloodSugar} onChange={(e) => setFastingBloodSugar(e.target.value)}
-                  className="w-full p-2 border rounded-md" step="0.1"/>
+                  className="w-full p-2 border rounded-md form-input" step="0.1" placeholder="Optional"/>
               </div>
 
               <div>
                 <label className="block text-sm mb-1">Hemoglobin A1c (%)</label>
                 <input type="number" value={hemoglobinA1c} onChange={(e) => setHemoglobinA1c(e.target.value)}
-                  className="w-full p-2 border rounded-md" step="0.1"/>
-              </div>
-
-              <div>
-                <label className="block text-sm mb-1">Current Glucose Level (mmol/L)
-                </label>
-                <input type="number" value={currentGlucose} onChange={(e) => setCurrentGlucose(e.target.value)}
-                  className="w-full p-2 border rounded-md" step="0.1"/>
-              </div>
-
-              <div>
-                <label className="block text-sm mb-1">Target Glucose Level (mmol/L)</label>
-                <input type="number" value={targetGlucose} onChange={(e) => setTargetGlucose(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  min="4" max="7" step="0.1"/>
+                  className="w-full p-2 border rounded-md form-input" step="0.1" placeholder="Optional"/>
               </div>
 
               <div>
                 <label className="block text-sm mb-1">Insulin Sensitivity (mmol/L per 1 unit)</label>
                 <input type="number" value={insulinSensitivity} onChange={(e) => setInsulinSensitivity(e.target.value)}
-                  className="w-full p-2 border rounded-md"step="0.1"/>
+                  className="w-full p-2 border rounded-md form-input"step="0.1" placeholder="Optional"/>
               </div>
 
               <div>
                 <label className="block text-sm mb-1">Insulin Ratio (units/10-12g carbs)</label>
                 <input type="number" value={insulinRatio} onChange={(e) => setInsulinRatio(e.target.value)}
-                  className="w-full p-2 border rounded-md" step="0.1"/>
+                  className="w-full p-2 border rounded-md form-input" step="0.1" placeholder="Optional"/>
               </div>
 
               <div>
                 <label className="block text-sm mb-1">Insulin Type</label>
                 <select value={insulinType} onChange={(e) => setInsulinType(e.target.value)} 
-                    className="w-full p-2 border rounded-md">
+                    className="w-full p-2 border rounded-md form-select">
                   <option value="short">Short-acting</option>
                   <option value="ultrashort">Rapid-acting</option>
                   <option value="basal">Long-acting</option>
                 </select>
               </div>
+
+              <div>
+                <label className="block text-sm mb-1">Current Glucose Level (mmol/L)
+                  <span className="text-primary text-base font-fontMain font-extrabold">*</span>
+                </label>
+                <input type="number" value={currentGlucose} onChange={(e) => setCurrentGlucose(e.target.value)}
+                  className="w-full p-2 border rounded-md form-input" step="0.1" required/>
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1">Target Glucose Level (mmol/L)</label>
+                <input type="number" value={targetGlucose} onChange={(e) => setTargetGlucose(e.target.value)}
+                  className="w-full p-2 border rounded-md form-input"
+                  min="4" max="7" step="0.1"/>
+              </div> 
             </div>
           </div>
         </section>
@@ -483,13 +491,17 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-        {imageError && (
-            <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-                Error: {imageError}
+          <div className="text-sm text-secondary font-fontMain space-y-2">
+            {imageAnalysis?.confidenceNotes.map((note: any, index: any) => (
+              note && note !== "" ? (<p key={index}>* {note}</p>) : null
+            ))}
+            <div className="pt-4 border-t border-thirdary">
+                {imageAnalysis?.disclaimers.map((disclaimer: any, index: any) => (
+                    <p key={index} className="italic">{disclaimer}</p>
+                ))}
             </div>
+          </div>
+        </div>   
         )}
 
         {imageAnalysis && (
