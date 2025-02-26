@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 import IconSVG from "@/app/components/IconSVG";
 
+const MEAL_OPTIONS = ['Breakfast', 'Lunch', 'Dinner', 'Brunch', 'Snack', 'Supper'];
+
 export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
-  // State variables
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [bmi, setBmi] = useState('');
@@ -15,9 +16,9 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
   const [neck, setNeck] = useState('');
   const [bodyFat, setBodyFat] = useState('');
   const [duration, setDuration] = useState('');
-  const [durationUnit, setDurationUnit] = useState('days');
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [mealQuantity, setMealQuantity] = useState('3');
+  const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
   const [loveProducts, setLoveProducts] = useState<string[]>([]);
   const [unloveProducts, setUnloveProducts] = useState<string[]>([]);
   const [budget, setBudget] = useState('');
@@ -39,26 +40,30 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
     // Add your diet generation logic here
   };
 
-  // Reusable Components
+  const handleMealSelect = (meal: string) => {
+    if (selectedMeals.includes(meal)) {
+      setSelectedMeals(selectedMeals.filter(m => m !== meal));
+    } else {
+      if (selectedMeals.length < parseInt(mealQuantity)) {
+        setSelectedMeals([...selectedMeals, meal]);
+      }
+    }
+  };
+
   const InputField = ({ label, value, onChange, ...props }: any) => (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-secondary">{label}</label>
-      <input
-        {...props}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full p-3 border-2 border-primary/20 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/50"
-      />
+      <label className="block ml-[2px] text-sm font-bold font-fontMain text-secondary">{label}</label>
+      <input {...props} value={value} onChange={(e) => onChange(e.target.value)} className="w-full p-3 form-input"/>
     </div>
   );
 
   const SelectInput = ({ label, value, onChange, options }: any) => (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-secondary">{label}</label>
+      <label className="block ml-[2px] text-sm font-bold font-fontMain text-secondary">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full p-3 border-2 border-primary/20 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/50"
+        className="w-full p-3 form-select"
       >
         {options.map((option: string) => (
           <option key={option} value={option.toLowerCase()}>{option}</option>
@@ -67,15 +72,35 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
     </div>
   );
 
-  const CheckboxInput = ({ label, checked, onChange }: any) => (
-    <label className="flex items-center space-x-2">
+  const StyledCheckbox = ({ label, emoji, checked, onChange, className }: any) => (
+    <label className={`relative cursor-pointer group ${className}`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="form-checkbox h-4 w-4 text-primary"
+        className="hidden"
       />
-      <span className="text-sm text-secondary capitalize">{label}</span>
+      <div className={`p-[10px] rounded-xl border-[1px] transition-all duration-200
+        ${checked 
+          ? 'border-primary bg-primary/10 shadow-md border-[2px]' 
+          : 'border-primary/20 hover:border-primary/40 bg-pageColor'}`}
+      >
+        <div className="flex items-center gap-2">
+          <span className={`text-[20px] transition-colors ${checked ? 'text-primary' : 'text-secondary'}`}>
+            {emoji}
+          </span>
+          <span className={`font-medium ${checked ? 'text-primary' : 'text-secondary'}`}>
+            {label}
+          </span>
+        </div>
+        {checked && (
+          <div className="absolute top-0 right-0 -mt-2 -mr-2">
+            <div className="bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center">
+              ✓
+            </div>
+          </div>
+        )}
+      </div>
     </label>
   );
 
@@ -113,10 +138,10 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
     <div className="md:col-span-2">
       <div className="bg-primary/10 p-4 rounded-lg flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-bold text-primary">Body Mass Index</h3>
-          <p className="text-sm text-secondary">Healthy range: 18.5 - 24.9</p>
+          <h3 className="text-lg font-bold text-primary font-fontMain">Body Mass Index</h3>
+          <p className="text-sm text-secondary font-fontMain font-bold">Healthy range: 18.5 - 24.9</p>
         </div>
-        <div className="text-3xl font-bold text-primary">
+        <div className="text-4xl font-extrabold text-primary font-fontMain">
           {bmi || '--'}
         </div>
       </div>
@@ -125,24 +150,18 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
 
   const AdvancedMeasurements = ({ showAdvanced, setShowAdvanced, waist, setWaist, neck, setNeck, bodyFat }: any) => (
     <div className="mt-6 border-t border-primary/20 pt-6">
-      <button
-        onClick={() => setShowAdvanced(!showAdvanced)}
-        className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors w-full"
-      >
+      <button onClick={() => setShowAdvanced(!showAdvanced)} className="flex items-center justify-center lg:justify-start gap-2 text-primary 
+            hover:text-primary/80 transition-colors w-full">
         <span className="font-medium">Advanced Measurements</span>
-        <svg
-          className={`w-5 h-5 transform transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className={`w-5 h-5 transform transition-transform ${showAdvanced ? 'rotate-180' : ''}`} 
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       
       <div className={`overflow-hidden transition-all duration-300 ${showAdvanced ? 'max-h-96' : 'max-h-0'}`}>
         <div className="pt-6 space-y-4">
-          <h3 className="text-lg font-fontHeader font-bold text-primary">Detailed Measurements</h3>
+          <h3 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary">Detailed Measurements</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField 
               label="Waist (cm)" 
@@ -160,10 +179,10 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
               <div className="bg-primary/10 p-4 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-primary">Body Fat Percentage</h3>
-                    <p className="text-sm text-secondary">Calculated from measurements</p>
+                    <h3 className="text-lg font-bold text-primary font-fontMain">Body Fat Percentage</h3>
+                    <p className="text-sm text-secondary font-fontMain font-bold">Calculated from measurements</p>
                   </div>
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-4xl font-extrabold text-primary font-fontMain">
                     {bodyFat ? `${bodyFat}%` : '--'}
                   </div>
                 </div>
@@ -175,6 +194,18 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
     </div>
   );
 
+  const getMealIcon = (meal: string) => {
+    switch (meal) {
+      case 'Breakfast': return '🥞';
+      case 'Brunch': return '🥐';
+      case 'Lunch': return '🥗';
+      case 'Snack': return '🍎';
+      case 'Dinner': return '🍽️';
+      case 'Supper': return '🍵';
+      default: return '🍴';
+    }
+  };
+
   return (
     <div className="min-h-[calc(100vh-200px)] bg-background">
       <div className="max-w-7xl mx-auto text-center pt-8">
@@ -184,11 +215,9 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
       </div>
       
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 py-8">
-        {/* Left Column - Body Metrics & Activity */}
         <div className="space-y-6">
-          {/* Body Metrics Card */}
-          <div className="bg-pageColor p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
-            <h2 className="text-2xl font-fontHeader font-bold text-primary mb-6">Body Metrics</h2>
+          <div className="bg-pageColor p-[10px] md:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
+            <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Body Metrics</h2>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <InputField 
@@ -217,11 +246,10 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
             </div>
           </div>
 
-          {/* Activity & Goals Card */}
-          <div className="bg-pageColor p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
+          <div className="bg-pageColor p-[10px] lg:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-fontHeader font-bold text-primary mb-6">Activity Level</h2>
+                <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Activity Level</h2>
                 <div className="space-y-4">
                   <SelectInput
                     label="Daily Activity"
@@ -241,75 +269,136 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
               </div>
 
               <div>
-                <h2 className="text-2xl font-fontHeader font-bold text-primary mb-6">Nutrition Goals</h2>
+                <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Nutrition Goals</h2>
+                <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <SelectInput
+                    <SelectInput
                     label="Primary Goal"
                     value={goal}
                     onChange={setGoal}
                     options={['Cut', 'Gain', 'Maintain', 'Improve']}
-                  />
-                  {['cut', 'gain'].includes(goal) && (
-                    <InputField
-                      label="Target Weight (kg)"
-                      value={desiredWeight}
-                      onChange={setDesiredWeight}
-                      type="number"
                     />
-                  )}
-                  <SelectInput
-                    label="Meals/Day"
-                    value={mealQuantity}
-                    onChange={setMealQuantity}
-                    options={['3', '4', '5', '6']}
-                  />
-                  <InputField
+                    {['cut', 'gain'].includes(goal) && (
+                    <InputField
+                        label="Target Weight (kg)"
+                        value={desiredWeight}
+                        onChange={setDesiredWeight}
+                        type="number"
+                    />
+                    )}
+                </div>
+
+                <div className="space-y-4">
+                    <SelectInput
+                        label="Meals/Day"
+                        value={mealQuantity}
+                        onChange={(value: string) => {
+                        setMealQuantity(value);
+                        setSelectedMeals([]);
+                        }}
+                        options={['2', '3', '4', '5', '6']}
+                    />
+
+                    {mealQuantity && (
+                        <div className="space-y-2">
+                        <label className="block text-sm font-bold font-fontMain text-secondary">
+                            Select {mealQuantity} {mealQuantity === '1' ? 'Meal' : 'Meals'}
+                        </label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                            {MEAL_OPTIONS.map((meal) => {
+                            const isSelected = selectedMeals.includes(meal);
+                            const isDisabled = !isSelected && selectedMeals.length >= parseInt(mealQuantity);
+                            
+                            return (
+                                <label 
+                                key={meal}
+                                className={`relative cursor-pointer group ${
+                                    isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
+                                >
+                                <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleMealSelect(meal)}
+                                    disabled={isDisabled}
+                                    className="hidden"
+                                />
+                                <div className={`p-3 rounded-xl border-[1px] transition-all duration-200
+                                    ${isSelected 
+                                    ? 'border-primary bg-primary/20 shadow-md border-[2px]' 
+                                    : 'border-primary/50 hover:border-primary/60 bg-pageColor'}
+                                    ${isDisabled ? 'hover:border-primary/20' : ''}`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                    <span className={`text-lg transition-colors ${
+                                        isSelected ? 'text-primary' : 'text-secondary'
+                                    }`}>
+                                        {getMealIcon(meal)}
+                                    </span>
+                                    <span className={`font-medium ${
+                                        isSelected ? 'text-primary' : 'text-secondary'
+                                    }`}>
+                                        {meal}
+                                    </span>
+                                    </div>
+                                    {isSelected && (
+                                    <div className="absolute top-0 right-0 -mt-2 -mr-2">
+                                        <div className="bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center">
+                                        ✓
+                                        </div>
+                                    </div>
+                                    )}
+                                </div>
+                                </label>
+                            );
+                            })}
+                        </div>
+                        {selectedMeals.length > 0 && (
+                            <div className="mt-2 ml-[2px] text-sm font-bold font-fontMain text-primary/80">
+                            Selected meals:{" "}
+                            <span className="font-medium">{selectedMeals.join(', ')}</span>
+                            </div>
+                        )}
+                        </div>
+                    )}
+                    </div>
+
+                <InputField
                     label="Daily Calories"
                     value={calories}
                     onChange={setCalories}
                     type="number"
                     step="50"
-                  />
+                />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column - Preferences & Restrictions */}
         <div className="space-y-6">
-          {/* Diet Preferences Card */}
-          <div className="bg-pageColor p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
-            <h2 className="text-2xl font-fontHeader font-bold text-primary mb-6">Diet Preferences</h2>
+          <div className="bg-pageColor p-[10px] lg:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
+            <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Diet Preferences</h2>
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-secondary mb-2">Diet Duration</label>
+                  <label className="block text-sm ml-[2px] font-bold font-fontMain text-secondary mb-2">Diet Duration</label>
                   <div className="flex gap-2">
                     <input
                       type="number"
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
-                      className="w-full p-3 border-2 border-primary/20 rounded-lg"
-                      placeholder="Duration"
+                      className="w-full p-3 form-input"
+                      placeholder="Days"
                     />
-                    <select
-                      value={durationUnit}
-                      onChange={(e) => setDurationUnit(e.target.value)}
-                      className="w-32 p-3 border-2 border-primary/20 rounded-lg"
-                    >
-                      <option value="days">Days</option>
-                      <option value="weeks">Weeks</option>
-                      <option value="months">Months</option>
-                    </select>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-secondary">Diet Pace</label>
+                  <label className="block text-sm ml-[2px] font-bold font-fontMain text-secondary">Diet Pace</label>
                   <select
                     value={dietPace}
                     onChange={(e) => setDietPace(e.target.value)}
-                    className="w-full p-3 border-2 border-primary/20 rounded-lg"
+                    className="w-full p-3 form-select"
                   >
                     <option value="slow">Slow</option>
                     <option value="medium">Medium</option>
@@ -320,49 +409,59 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-secondary">Weekly Budget ($)</label>
+                  <label className="block text-sm ml-[2px] font-bold font-fontMain text-secondary">Weekly Budget ($)</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2">$</span>
                     <input
                       type="number"
                       value={budget}
                       onChange={(e) => setBudget(e.target.value)}
-                      className="w-full pl-8 p-3 border-2 border-primary/20 rounded-lg"
+                      className="w-full pl-8 p-3 form-input"
                     />
                   </div>
                 </div>
-                <CheckboxInput
-                  label="Allow Exotic Foods"
-                  checked={exoticAllowed}
-                  onChange={setExoticAllowed}
-                />
+                <StyledCheckbox
+                    label={<><span className="hidden lg:inline">Allow </span>Exotic Foods</>}
+                    emoji="🌍"
+                    checked={exoticAllowed}
+                    onChange={(checked: boolean) => setExoticAllowed(checked)}
+                    className="mt-[-4px] lg:mt-[20px]"
+                    />
               </div>
             </div>
           </div>
 
           {/* Dietary Restrictions Card */}
-          <div className="bg-pageColor p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
-            <h2 className="text-2xl font-fontHeader font-bold text-primary mb-6">Dietary Restrictions</h2>
+          <div className="bg-pageColor p-[10px] lg:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
+            <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Dietary Restrictions</h2>
             <div className="grid grid-cols-2 gap-4">
-              {['Vegetarian', 'Vegan', 'Halal', 'Kosher', 'Pork-free', 'Dairy-free'].map((restriction) => (
-                <CheckboxInput
-                  key={restriction}
-                  label={restriction}
-                  checked={restrictions.includes(restriction.toLowerCase())}
-                  onChange={(checked: boolean) => 
+            {[
+                { label: 'Vegetarian', emoji: '🌱' },
+                { label: 'Vegan', emoji: '🥦' },
+                { label: 'Halal', emoji: '☪️' },
+                { label: 'Kosher', emoji: '✡️' },
+                { label: 'Pork-free', emoji: '🐖🚫' },
+                { label: 'Dairy-free', emoji: '🥛🚫' }
+                ].map(({ label, emoji }) => (
+                <StyledCheckbox
+                    key={label}
+                    label={label}
+                    emoji={emoji}
+                    checked={restrictions.includes(label.toLowerCase())}
+                    onChange={(checked: boolean) => 
                     setRestrictions(checked ? 
-                      [...restrictions, restriction.toLowerCase()] : 
-                      restrictions.filter(r => r !== restriction.toLowerCase())
+                        [...restrictions, label.toLowerCase()] : 
+                        restrictions.filter(r => r !== label.toLowerCase())
                     )
-                  }
+                    }
                 />
-              ))}
+                ))}
             </div>
           </div>
 
           {/* Food Preferences Card */}
-          <div className="bg-pageColor p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
-            <h2 className="text-2xl font-fontHeader font-bold text-primary mb-6">Food Preferences</h2>
+          <div className="bg-pageColor p-[10px] lg:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
+            <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Food Preferences</h2>
             <div className="space-y-4">
               <TagInput
                 label="Favorite Foods"
