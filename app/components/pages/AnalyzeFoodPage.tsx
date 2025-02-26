@@ -245,18 +245,18 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
         </section>
       </main>
 
-      <div className="flex justify-center">
-        <button onClick={imageSender} className="flex items-center justify-center gap-2 w-full bg-primary/10
+      <div className="flex justify-center px-4">
+        <button onClick={imageSender} className="flex items-center justify-left gap-2 w-full bg-primary/10
             border-[3px] border-primary text-secondary rounded-lg hover:bg-primary/50 transition-colors
-            max-w-[400px] mx-auto p-[5px]">
+            max-w-[400px] mx-auto p-[5px] pl-[5px] md:pl-[30px]">
           <div className="flex-shrink-0">
             <IconSVG
                 type="logoAnalyze"
                 color="rgb(var(--secondary))"
-                width="120"
-                height="120"/>
+                width="100"
+                height="100"/>
           </div>
-          <span className="text-2xl xl:text-3xl font-extrabold uppercase font-fontHeader">
+          <span className="text-2xl md:text-3xl font-extrabold uppercase font-fontHeader">
             {isLoadingImage ? "Analyzing..." : "Analyze"}
           </span>
         </button>
@@ -459,7 +459,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
             </div>
 
             <div className="flex flex-col gap-6 h-full">
-              <div className="bg-green-50/70 p-6 border-2 border-green-200 rounded-[15px] 
+              <div className="bg-green-50 p-6 border-2 border-green-200 rounded-[15px] 
                   shadow-[5px_5px_15px_0px_rgb(var(--shadow)/0.15)] flex-1 relative
                   transform rotate-1 hover:rotate-0 transition-transform">
                 <div className="absolute top-2 right-2 text-green-400">
@@ -474,7 +474,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                   ))}
                 </ul>
               </div>
-              <div className="bg-red-50/70 p-6 border-2 border-red-200 rounded-[15px] 
+              <div className="bg-red-50 p-6 border-2 border-red-200 rounded-[15px] 
                   shadow-[5px_5px_15px_0px_rgb(var(--shadow)/0.15)] flex-1 relative
                   transform -rotate-1 hover:rotate-0 transition-transform">
                 <div className="absolute top-2 right-2 text-red-400">

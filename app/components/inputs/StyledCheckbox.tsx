@@ -10,7 +10,7 @@ export const StyledCheckbox = ({ label, emoji, checked, onChange, className }: a
             <span className={`text-lg transition-colors ${checked ? 'text-primary' : 'text-secondary'}`}>
               {emoji}
             </span>
-            <span className={`font-bold ${checked ? 'text-primary font-extrabold' : 'text-secondary'}`}>
+            <span className={`font-bold text-sm md:text-base ${checked ? 'text-primary font-extrabold' : 'text-secondary'}`}>
               {label}
             </span>
           </div>

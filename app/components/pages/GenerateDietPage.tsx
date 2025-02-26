@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import IconSVG from "@/app/components/IconSVG";
 import { InputField, SelectInput, StyledCheckbox, TagInput } from '../inputs';
 
@@ -38,7 +38,7 @@ const AdvancedMeasurements = ({ showAdvanced, setShowAdvanced, waist, setWaist, 
                   <h3 className="text-lg font-bold text-primary font-fontMain">Body Fat Percentage</h3>
                   <p className="text-sm text-secondary font-fontMain font-bold">Calculated from measurements</p>
                 </div>
-                <div className="text-4xl font-extrabold text-primary font-fontMain">
+                <div className="text-[20px] md:text-[26px] font-extrabold text-primary font-fontMain">
                   {bodyFat ? `${bodyFat}%` : '--'}
                 </div>
               </div>
@@ -53,7 +53,7 @@ const AdvancedMeasurements = ({ showAdvanced, setShowAdvanced, waist, setWaist, 
 export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
-  const [bmi, setBmi] = useState('');
+  // const [bmi, setBmi] = useState('');
   const [goal, setGoal] = useState('');
   const [desiredWeight, setDesiredWeight] = useState('');
   const [activityLevel, setActivityLevel] = useState('');
@@ -61,7 +61,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [waist, setWaist] = useState('');
   const [neck, setNeck] = useState('');
-  const [bodyFat, setBodyFat] = useState('');
+  // const [bodyFat, setBodyFat] = useState('');
   const [duration, setDuration] = useState('');
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [mealQuantity, setMealQuantity] = useState('3');
@@ -74,13 +74,41 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
   const [calories, setCalories] = useState('');
   const [isLoadingDiet, setIsLoadingDiet] = useState(false);
 
-  const calculateBMI = useCallback(() => {
-    if (height && weight) {
-      const heightM = Number(height) / 100;
-      const calculatedBMI = Number(weight) / (heightM * heightM);
-      setBmi(calculatedBMI.toFixed(1));
-    }
-  }, [height, weight]);
+  const bmi = useMemo(() => {
+      if (height && weight) {
+          const heightM = parseFloat(height) / 100;
+          const weightKg = parseFloat(weight);
+          if (!isNaN(heightM) && !isNaN(weightKg) && heightM > 0) {
+              return (weightKg / (heightM * heightM)).toFixed(1);
+          }
+      }
+      return patientInfo?.measureData?.bmi || '';
+  }, [height, weight, patientInfo]);
+      
+  
+  const bodyFat = useMemo(() => {
+      if (!waist || !neck || !height || !patientInfo?.patientData?.gender) return '';
+
+      const waistCm = parseFloat(waist);
+      const neckCm = parseFloat(neck);
+      const heightCm = parseFloat(height);
+      const gender = patientInfo.patientData.gender;
+      
+      if (gender.toLowerCase() === 'male') {
+          return (495 / (1.0324 - 0.19077 * Math.log10(waistCm - neckCm) + 0.15456 * Math.log10(heightCm)) - 450).toFixed(1);
+      } else {
+          return (495 / (1.29579 - 0.35004 * Math.log10(waistCm + neckCm) + 0.22100 * Math.log10(heightCm)) - 450).toFixed(1);
+      }
+  }, [waist, neck, height, patientInfo]);
+      
+  useEffect(() => {
+      if (patientInfo?.measureData) {
+          setHeight(patientInfo.measureData.height?.split(' ')[0] || '');
+          setWeight(patientInfo.measureData.weight?.split(' ')[0] || '');
+          setWaist(patientInfo.measureData.waist || '');
+          setNeck(patientInfo.measureData.neck || '');
+      }
+  }, [patientInfo]);
 
   const handleGenerateDiet = async () => {
     setIsLoadingDiet(true);
@@ -142,7 +170,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                         <h3 className="text-lg font-bold text-primary font-fontMain">Body Mass Index</h3>
                         <p className="text-sm text-secondary font-fontMain font-bold">Healthy range: 18.5 - 24.9</p>
                     </div>
-                    <div className="text-4xl font-extrabold text-primary font-fontMain">
+                    <div className="text-[20px] md:text-[26px] font-extrabold text-primary font-fontMain">
                         {bmi || '--'}
                     </div>
                 </div>
@@ -191,10 +219,11 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
 
                     {['cut', 'gain'].includes(goal) && (
                     <InputField
-                        label="Target Weight (kg)"
+                        label="Target Weight"
                         value={desiredWeight}
                         onChange={setDesiredWeight}
-                        type="number"/>
+                        type="number"
+                        placeholder="kg"/>
                     )}
                 </div>
                 <InputField
@@ -295,7 +324,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
 
               <div className="grid grid-cols-2 gap-4">
                 <InputField
-                    label="Weekly Budget ($)"
+                    label="Weekly Budget"
                     value={budget}
                     onChange={setBudget}
                     type="number"
@@ -306,7 +335,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                     emoji="🌍"
                     checked={exoticAllowed}
                     onChange={(checked: boolean) => setExoticAllowed(checked)}
-                    className="mt-[-4px] lg:mt-[21px]"/>
+                    className="mt-[9px] lg:mt-[21px]"/>
               </div>
             </div>
           </div>
