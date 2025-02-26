@@ -80,16 +80,16 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
         onChange={(e) => onChange(e.target.checked)}
         className="hidden"
       />
-      <div className={`p-[10px] rounded-xl border-[1px] transition-all duration-200
+      <div className={`p-[10px] rounded-xl border-[1px] transition-all duration-200 font-fontMain
         ${checked 
-          ? 'border-primary bg-primary/10 shadow-md border-[2px]' 
-          : 'border-primary/20 hover:border-primary/40 bg-pageColor'}`}
+          ? 'border-primary bg-primary/20 shadow-md border-[2px]' 
+          : 'border-primary/50 hover:border-primary hover:bg-primary/50 bg-pageColor'}`}
       >
         <div className="flex items-center gap-2">
-          <span className={`text-[20px] transition-colors ${checked ? 'text-primary' : 'text-secondary'}`}>
+          <span className={`text-lg transition-colors ${checked ? 'text-primary' : 'text-secondary'}`}>
             {emoji}
           </span>
-          <span className={`font-medium ${checked ? 'text-primary' : 'text-secondary'}`}>
+          <span className={`font-bold ${checked ? 'text-primary font-extrabold' : 'text-secondary'}`}>
             {label}
           </span>
         </div>
@@ -130,20 +130,6 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
             </button>
           </span>
         ))}
-      </div>
-    </div>
-  );
-
-  const BMICard = ({ bmi }: any) => (
-    <div className="md:col-span-2">
-      <div className="bg-primary/10 p-4 rounded-lg flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold text-primary font-fontMain">Body Mass Index</h3>
-          <p className="text-sm text-secondary font-fontMain font-bold">Healthy range: 18.5 - 24.9</p>
-        </div>
-        <div className="text-4xl font-extrabold text-primary font-fontMain">
-          {bmi || '--'}
-        </div>
       </div>
     </div>
   );
@@ -233,7 +219,17 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                   type="number"
                 />
               </div>
-              <BMICard bmi={bmi} />
+              <div className="md:col-span-2">
+                <div className="bg-primary/10 p-4 rounded-lg flex items-center justify-between">
+                    <div>
+                        <h3 className="text-lg font-bold text-primary font-fontMain">Body Mass Index</h3>
+                        <p className="text-sm text-secondary font-fontMain font-bold">Healthy range: 18.5 - 24.9</p>
+                    </div>
+                    <div className="text-4xl font-extrabold text-primary font-fontMain">
+                        {bmi || '--'}
+                    </div>
+                </div>
+              </div>
               <AdvancedMeasurements 
                 showAdvanced={showAdvanced}
                 setShowAdvanced={setShowAdvanced}
@@ -287,6 +283,13 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                     />
                     )}
                 </div>
+                <InputField
+                    label="Daily Calories"
+                    value={calories}
+                    onChange={setCalories}
+                    type="number"
+                    step="50"
+                />
 
                 <div className="space-y-4">
                     <SelectInput
@@ -301,7 +304,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
 
                     {mealQuantity && (
                         <div className="space-y-2">
-                        <label className="block text-sm font-bold font-fontMain text-secondary">
+                        <label className="block text-sm ml-[2px] font-bold font-fontMain text-secondary">
                             Select {mealQuantity} {mealQuantity === '1' ? 'Meal' : 'Meals'}
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -323,10 +326,10 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                                     disabled={isDisabled}
                                     className="hidden"
                                 />
-                                <div className={`p-3 rounded-xl border-[1px] transition-all duration-200
+                                <div className={`p-[10px] rounded-xl border-[1px] transition-all duration-200 font-fontMain
                                     ${isSelected 
                                     ? 'border-primary bg-primary/20 shadow-md border-[2px]' 
-                                    : 'border-primary/50 hover:border-primary/60 bg-pageColor'}
+                                    : 'border-primary/50 hover:border-primary hover:bg-primary/50 bg-pageColor'}
                                     ${isDisabled ? 'hover:border-primary/20' : ''}`}
                                 >
                                     <div className="flex items-center gap-2">
@@ -335,8 +338,8 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                                     }`}>
                                         {getMealIcon(meal)}
                                     </span>
-                                    <span className={`font-medium ${
-                                        isSelected ? 'text-primary' : 'text-secondary'
+                                    <span className={`font-bold ${
+                                        isSelected ? 'text-primary font-extrabold' : 'text-secondary'
                                     }`}>
                                         {meal}
                                     </span>
@@ -362,14 +365,6 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                         </div>
                     )}
                     </div>
-
-                <InputField
-                    label="Daily Calories"
-                    value={calories}
-                    onChange={setCalories}
-                    type="number"
-                    step="50"
-                />
                 </div>
               </div>
             </div>
