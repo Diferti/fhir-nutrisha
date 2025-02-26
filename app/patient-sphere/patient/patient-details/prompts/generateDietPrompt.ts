@@ -1,6 +1,5 @@
 interface GenerateDietPromptParams {
     duration: string;
-    durationUnit: string;
     dietPace: string;
     patientInfo: any;
     weight: string;
@@ -11,19 +10,18 @@ interface GenerateDietPromptParams {
     goal: string;
     desiredWeight: string;
     mealQuantity: string;
-    calories: string;
+    selectedMeals: string[];
     exoticAllowed: boolean;
     budget: string;
     loveProducts: string[];
     unloveProducts: string[];
     restrictions: string[];
-    timePreparation: number;
   }
   
-  export const generateDietPrompt = ({duration, durationUnit, dietPace, patientInfo, weight, height, bmi, activityLevel, workoutType,
-    goal, desiredWeight, mealQuantity, calories, exoticAllowed, budget, loveProducts, unloveProducts, restrictions, timePreparation,
+  export const generateDietPrompt = ({duration, dietPace, patientInfo, weight, height, bmi, activityLevel, workoutType,
+    goal, desiredWeight, mealQuantity, selectedMeals, exoticAllowed, budget, loveProducts, unloveProducts, restrictions
   }: GenerateDietPromptParams): string => {
-    return `Generate a ${duration}-${durationUnit} ${dietPace}-paced diet plan for a ${patientInfo?.patientData?.age}-year-old ${patientInfo?.patientData?.gender} based on:
+    return `Generate a ${duration ? duration : "1"}-days ${dietPace}-paced diet plan for a ${patientInfo?.patientData?.age}-year-old ${patientInfo?.patientData?.gender} based on:
 ${patientInfo?.patientData?.gender === 'male' ? '♂ Male' : '♀ Female'} Profile:
 - Current Weight: ${weight} kg
 - Height: ${height} cm
@@ -32,8 +30,8 @@ ${patientInfo?.patientData?.gender === 'male' ? '♂ Male' : '♀ Female'} Profi
 - Goal: ${goal}${desiredWeight ? ` → Target: ${desiredWeight}kg` : ''}
 
 Nutritional Requirements:
-- Meals/Day: ${mealQuantity}
-- Calories/Day: ${calories || 'auto-calculated'}
+- Meals/Day: ${mealQuantity}${selectedMeals.length > 0 ? " (" + selectedMeals.join(', ') + ")" : ""}
+- Calories/Day: auto-calculated
 - ${exoticAllowed ? 'Includes' : 'Excludes'} exotic ingredients
 ${budget ? `- Budget: $${budget}/week` : ''}
 
@@ -145,7 +143,7 @@ Please provide:
 2. Calorie estimates per meal
 3. Insulin dosing recommendations${patientInfo?.medicationData?.some((m: { name: string; }) => m.name.toLowerCase().includes('insulin')) ? ' (adjust for current insulin regimen)' : ''}
 4. Macronutrient breakdown (carbs/protein/fat)
-5. Grocery list with budget considerations
-6. Meal prep instructions for ${timePreparation} minutes
+5. Meal prep instructions
+${budget ? `6. Grocery list with budget considerations` : ''}
 `;
 };

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import IconSVG from "@/app/components/IconSVG";
 import { InputField, SelectInput, StyledCheckbox, TagInput } from '../inputs';
+import { generateDietPrompt } from '@/app/patient-sphere/patient/patient-details/prompts/generateDietPrompt';
 
 const MEAL_OPTIONS = ['Breakfast', 'Lunch', 'Dinner', 'Brunch', 'Snack', 'Supper'];
 
@@ -54,24 +55,32 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   // const [bmi, setBmi] = useState('');
-  const [goal, setGoal] = useState('');
-  const [desiredWeight, setDesiredWeight] = useState('');
-  const [activityLevel, setActivityLevel] = useState('');
-  const [workoutType, setWorkoutType] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [waist, setWaist] = useState('');
   const [neck, setNeck] = useState('');
   // const [bodyFat, setBodyFat] = useState('');
-  const [duration, setDuration] = useState('');
-  const [restrictions, setRestrictions] = useState<string[]>([]);
+
+  const [activityLevel, setActivityLevel] = useState('sedentary (little or no exercise, desk job)');
+  const [workoutType, setWorkoutType] = useState('');
+  const [goal, setGoal] = useState('balance');
+  const [desiredWeight, setDesiredWeight] = useState('');
+  
   const [mealQuantity, setMealQuantity] = useState('3');
-  const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
-  const [loveProducts, setLoveProducts] = useState<string[]>([]);
-  const [unloveProducts, setUnloveProducts] = useState<string[]>([]);
+  const [selectedMeals, setSelectedMeals] = useState<string[]>(['Breakfast', 'Lunch', 'Dinner']);
+
+  const [duration, setDuration] = useState('');
+  const [dietPace, setDietPace] = useState('moderate');
   const [budget, setBudget] = useState('');
   const [exoticAllowed, setExoticAllowed] = useState(false);
-  const [dietPace, setDietPace] = useState('middle');
-  const [calories, setCalories] = useState('');
+
+  const [restrictions, setRestrictions] = useState<string[]>([]);
+  
+  const [loveProducts, setLoveProducts] = useState<string[]>([]);
+  const [unloveProducts, setUnloveProducts] = useState<string[]>([]);
+
+  const [dietPlan, setDietPlan] = useState<any>(null);
+  const [aiRequest, setAiRequest] = useState<any>(null);
+  const [dietError, setDietError] = useState<string | null>(null);
   const [isLoadingDiet, setIsLoadingDiet] = useState(false);
 
   const bmi = useMemo(() => {
@@ -111,9 +120,37 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
   }, [patientInfo]);
 
   const handleGenerateDiet = async () => {
-    setIsLoadingDiet(true);
-    // Add your diet generation logic here
-  };
+      setIsLoadingDiet(true);
+      setDietError(null);
+  
+      const dietDescription = generateDietPrompt({duration, dietPace, patientInfo, weight, height, bmi, activityLevel, workoutType,
+          goal, desiredWeight, mealQuantity, selectedMeals, exoticAllowed, budget, loveProducts, unloveProducts, restrictions});
+                      
+      const formatedDietDescription = dietDescription.split("\n").filter(line => line.trim()).join("\n");
+  
+      try {
+          const response = await fetch('/api/generate-diet', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ dietDescription: formatedDietDescription }),
+          });
+                
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+                    
+          setAiRequest(formatedDietDescription);
+          const data = await response.json();
+          setDietPlan(data);
+      } catch (err) {
+          console.error('Diet generation failed:', err);
+          setDietError(err instanceof Error ? err.message : 'Failed to generate diet plan');
+      } finally {
+          setIsLoadingDiet(false);
+      }
+    };
 
   const handleMealSelect = (meal: string) => {
     if (selectedMeals.includes(meal)) {
@@ -139,7 +176,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-background">
-      <div className="max-w-7xl mx-auto text-center pt-8">
+      <div className="max-w-7xl mx-auto text-center">
         <h1 className="text-4xl font-bold text-secondary font-fontHeader tracking-tight sm:text-5xl md:text-6xl mb-4">
           Nutrisha Diet Generator
         </h1>
@@ -189,13 +226,17 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
           <div className="bg-pageColor p-[10px] lg:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
             <div className="space-y-6">
               <div>
-                <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Activity Level</h2>
+                <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">
+                  Activity <span className="font-fontMain">&</span> Goal</h2>
                 <div className="space-y-4">
                   <SelectInput
                     label="Daily Activity"
                     value={activityLevel}
                     onChange={setActivityLevel}
-                    options={['Sedentary', 'Light', 'Moderate', 'Active']}/>
+                    options={['Sedentary (Little or no exercise, desk job)', 
+                    'Lightly Active (Light activity 1-3 days/week)', 
+                    'Moderately Active (Regular exercise 3-5 days/week)', 
+                    'Very Active (Intense exercise 6-7 days/week)']}/>
 
                   {['moderate', 'active'].includes(activityLevel) && (
                     <InputField
@@ -208,14 +249,13 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
               </div>
 
               <div>
-                <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Nutrition Goals</h2>
                 <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                     <SelectInput
                     label="Primary Goal"
                     value={goal}
                     onChange={setGoal}
-                    options={['Cut', 'Gain', 'Maintain', 'Improve']}/>
+                    options={['Balance', 'Improve', 'Cut', 'Gain']}/>
 
                     {['cut', 'gain'].includes(goal) && (
                     <InputField
@@ -226,20 +266,22 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                         placeholder="kg"/>
                     )}
                 </div>
-                <InputField
-                    label="Daily Calories"
-                    value={calories}
-                    onChange={setCalories}
-                    type="number"
-                    step="50"/>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div className="bg-pageColor p-[10px] lg:p-8 border border-primary rounded-[15px] shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)]">
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-center lg:text-start text-2xl xl:text-3xl font-fontHeader font-bold text-primary mb-6">Meal Configuration</h2>
                 <div className="space-y-4">
                     <SelectInput
                         label="Meals/Day"
                         value={mealQuantity}
                         onChange={(value: string) => {
-                        setMealQuantity(value);
-                        setSelectedMeals([]);
+                          setMealQuantity(value);
+                          setSelectedMeals([]);
                         }}
                         options={['2', '3', '4', '5', '6']}/>
 
@@ -270,19 +312,20 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                                     ${isDisabled ? 'hover:border-primary/20' : ''}`}>
 
                                     <div className="flex items-center gap-2">
-                                    <span className={`text-lg transition-colors ${isSelected ? 'text-primary' : 'text-secondary'}`}>
+                                      <span className={`text-lg transition-colors ${isSelected ? 'text-primary' : 'text-secondary'}`}>
                                         {getMealIcon(meal)}
-                                    </span>
-                                    <span className={`font-bold ${isSelected ? 'text-primary font-extrabold' : 'text-secondary'}`}>
+                                      </span>
+                                      <span className={`font-bold ${isSelected ? 'text-primary font-extrabold' : 'text-secondary'}`}>
                                         {meal}
-                                    </span>
+                                      </span>
                                     </div>
+
                                     {isSelected && (
-                                    <div className="absolute top-0 right-0 -mt-2 -mr-2">
+                                      <div className="absolute top-0 right-0 -mt-2 -mr-2">
                                         <div className="bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center">
                                         ✓
                                         </div>
-                                    </div>
+                                      </div>
                                     )}
                                 </div>
                                 </label>
@@ -297,7 +340,6 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                         )}
                         </div>
                     )}
-                    </div>
                 </div>
               </div>
             </div>
@@ -319,7 +361,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                       label="Diet Pace"
                       value={dietPace}
                       onChange={setDietPace}
-                      options={['Slow', 'Medium', 'Fast']}/>
+                      options={['Moderate', 'Slow', 'Fast']}/>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -401,6 +443,30 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
             </span>
           </button>
       </div>
+
+      {aiRequest && (
+          <div>
+              <h2 className="text-xl font-bold mb-4">Diet Parameters</h2>
+              <pre className="bg-gray-50 p-4 rounded overflow-auto max-h-96 text-sm">
+                  {aiRequest}
+              </pre>
+          </div>
+      )}
+
+      {dietError && (
+          <div className="max-w-6xl mx-auto px-4 mt-4 p-4 bg-red-100 text-red-700 rounded font-fontMain font-bold">
+              Error: {dietError}
+          </div>
+      )}
+
+      {dietPlan && (
+          <div className="mt-8">
+              <h2 className="text-xl font-bold mb-4">Generated Diet Plan</h2>
+              <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[1000px]">
+                  {JSON.stringify(dietPlan, null, 2)}
+              </pre>
+          </div>
+      )}
     </div>
   );
 };

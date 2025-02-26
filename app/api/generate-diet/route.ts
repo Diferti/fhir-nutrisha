@@ -93,7 +93,7 @@ export async function POST(request: Request) {
                                                     properties: {
                                                         mealType: { 
                                                             type: "string",
-                                                            enum: ["Breakfast", "Brunch", "Lunch", "Snack", "Dinner", "Pre-Workout", "Post-Workout"],
+                                                            enum: ["Breakfast", "Brunch", "Lunch", "Snack", "Dinner", "Supper"],
                                                             description: "Adapt based on total meals and user preferences"
                                                         },
                                                         time: { type: "string", format: "HH:mm" },

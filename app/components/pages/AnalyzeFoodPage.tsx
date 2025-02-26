@@ -127,7 +127,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
       </div>
 
       {imageError && (
-            <div className="max-w-6xl mx-auto px-4 mt-4 p-4 bg-red-100 text-red-700 rounded">
+            <div className="max-w-6xl mx-auto px-4 mt-4 p-4 bg-red-100 text-red-700 rounded font-fontMain font-bold">
                 Error: {imageError}
             </div>
       )}
