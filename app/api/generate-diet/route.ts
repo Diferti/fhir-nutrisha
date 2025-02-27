@@ -137,19 +137,8 @@ export async function POST(request: Request) {
                                     },
                                     required: ["regimen"]
                                 },
-                                macronutrientDistribution: {
-                                    type: "object",
-                                    properties: {
-                                        perMeal: {
-                                            type: "array",
-                                            items: macronutrientSchema
-                                        },
-                                        dailyTotal: macronutrientSchema
-                                    },
-                                    required: ["dailyTotal"]
-                                },
                             },
-                            required: ["days", "insulinDosing", "macronutrientDistribution"]
+                            required: ["days", "insulinDosing"]
                         }
                     }
                 }

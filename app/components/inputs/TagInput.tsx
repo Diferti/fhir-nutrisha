@@ -11,7 +11,7 @@ export const TagInput = ({ label, values, setValues, colorClass, ...props }: any
             }}}/>
         <div className="flex flex-wrap gap-2 mt-2">
           {values.map((value: string, index: number) => (
-            <span key={index} className={`${colorClass} px-2 py-1 rounded-lg text-sm font-bold font-fontMain text-secondary`}>
+            <span key={index} className={`${colorClass} px-2 py-1 rounded-lg text-sm font-bold font-fontMain text-gray-600`}>
               {value}
               <button type="button" onClick={() => setValues(values.filter((_: any, i: number) => i !== index))}
                 className="ml-[3px] hover:text-red-500 text-base font-extrabold font-fontMain text-red-700">

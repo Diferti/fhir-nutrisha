@@ -212,39 +212,30 @@
         ];
     
         const snomedCodes = [
-            // Diabetes (Type 1: 46635009, Type 2: 44054006, Gestational: 237599001)
-            '46635009', '44054006', '237599001',
-            // Obesity
-            '238136002', '162864005',
-            // Thyroid (Hypothyroidism: 40930008, Goiter: 80394007)
-            '40930008', '80394007',
-            // PKU (373903007), Galactosemia (190782001)
-            '373903007', '190782001',
-            // Gout (30934000)
-            '30934000',
-            // Osteoporosis (64859006)
-            '64859006',
+            // Metabolic/Endocrine
+            '46635009', '44054006', '237599001',    // Diabetes
+            '238136002', '162864005',               // Obesity
+            '40930008', '80394007',                 // Thyroid
+            '190687004', '190745006',               // PKU, Galactosemia
+            '90560007',                             // Gout
+            '64859006',                             // Osteoporosis
 
-            // Cardiovascular (Hypertension: 38341003, Heart failure: 84114007)
-            '38341003', '84114007',
-            // Hyperlipidemia (55822004)
-            '55822004',
+            // Cardiovascular
+            '38341003', '84114007',                 // Hypertension, Heart failure
+            '55822004',                             // Hyperlipidemia
 
-            // Renal (CKD: 723190009, ESRD: 46177005)
-            '723190009', '46177005',
-            // Celiac (396331005), Crohn's (34000006), UC (64766004)
-            '396331005', '34000006', '64766004',
-            // IBS (52702003), GERD (235595009)
-            '52702003', '235595009',
-            // Cirrhosis (19943007), Fatty liver (42946005)
-            '19943007', '42946005',
+            // Renal
+            '723190009', '46177005',                // CKD/ESRD
 
-            // Dysphagia (40845005), Cachexia (23881000119106)
-            '40845005', '23881000119106',
-            // HIV (86406008), Foodborne illness (87628006)
-            '86406008', '87628006',
-            // Eating disorders (361055000), Lactose intolerance (44808001)
-            '361055000', '44808001'
+            // Gastrointestinal
+            '396331005', '34000006', '64766004',    // Celiac, Crohn's, UC
+            '52702003', '235595009',                // IBS, GERD
+            '19943007', '50325005',                 // Cirrhosis, Fatty liver
+
+            // Nutritional/Other
+            '40739000', '240128005',                // Dysphagia, Cachexia
+            '86406008', '87628006',                 // HIV, Foodborne illness
+            '72366004', '25744000'                  // Eating disorders, Lactose intolerance
         ];
     
         const conditionArray: { code: any, name: any; status: any; }[] = [];

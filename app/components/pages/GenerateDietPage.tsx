@@ -5,6 +5,7 @@ import { generateDietPrompt } from '@/app/patient-sphere/patient/patient-details
 import { DietDescription } from '../DietDescription';
 
 const MEAL_OPTIONS = ['Breakfast', 'Lunch', 'Dinner', 'Brunch', 'Snack', 'Supper'];
+const MEAL_ORDER = ['Breakfast', 'Brunch', 'Lunch', 'Snack', 'Dinner', 'Supper'];
 
 const AdvancedMeasurements = ({ showAdvanced, setShowAdvanced, waist, setWaist, neck, setNeck, bodyFat }: any) => (
   <div className="mt-6 border-t border-primary/20 pt-6">
@@ -55,11 +56,9 @@ const AdvancedMeasurements = ({ showAdvanced, setShowAdvanced, waist, setWaist, 
 export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
-  // const [bmi, setBmi] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [waist, setWaist] = useState('');
   const [neck, setNeck] = useState('');
-  // const [bodyFat, setBodyFat] = useState('');
 
   const [activityLevel, setActivityLevel] = useState('sedentary (little or no exercise, desk job)');
   const [workoutType, setWorkoutType] = useState('');
@@ -124,7 +123,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
       setIsLoadingDiet(true);
       setDietError(null);
   
-      const dietDescription = generateDietPrompt({duration, dietPace, patientInfo, weight, height, bmi, activityLevel, workoutType,
+      const dietDescription = generateDietPrompt({duration, dietPace, patientInfo, weight, height, bmi, waist, neck, bodyFat, activityLevel, workoutType,
           goal, desiredWeight, mealQuantity, selectedMeals, exoticAllowed, budget, loveProducts, unloveProducts, restrictions});
                       
       const formatedDietDescription = dietDescription.split("\n").filter(line => line.trim()).join("\n");
@@ -153,15 +152,19 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
       }
     };
 
-  const handleMealSelect = (meal: string) => {
-    if (selectedMeals.includes(meal)) {
-      setSelectedMeals(selectedMeals.filter(m => m !== meal));
-    } else {
-      if (selectedMeals.length < parseInt(mealQuantity)) {
-        setSelectedMeals([...selectedMeals, meal]);
-      }
-    }
-  };
+    const handleMealSelect = (meal: string) => {
+      setSelectedMeals(prev => {
+        const updated = prev.includes(meal)
+          ? prev.filter(m => m !== meal)
+          : prev.length < parseInt(mealQuantity)
+            ? [...prev, meal]
+            : prev;
+    
+        return [...updated].sort(
+          (a, b) => MEAL_ORDER.indexOf(a) - MEAL_ORDER.indexOf(b)
+        );
+      });
+    };
 
   const getMealIcon = (meal: string) => {
     switch (meal) {

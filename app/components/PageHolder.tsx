@@ -5,7 +5,7 @@ export const PageHolder = ({ children }: { children: ReactNode }) => {
         <div className="fixed z-50 bg-background border border-primary rounded-[15px] 
           shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.5)] overflow-y-auto
                 /* Mobile */
-                top-[10px] bottom-[105px] left-[10px] right-[25px]
+                top-[10px] bottom-[105px] left-[10px] right-[10px]
                 /* 768px+*/
                 md:top-[50px] md:bottom-[50px] md:left-[190px] md:right-[115px]
                 /* 1280px+ */

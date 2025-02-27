@@ -5,6 +5,9 @@ interface GenerateDietPromptParams {
     weight: string;
     height: string;
     bmi: string;
+    waist: string;
+    neck: string;
+    bodyFat: string;
     activityLevel: string;
     workoutType: string;
     goal: string;
@@ -18,7 +21,7 @@ interface GenerateDietPromptParams {
     restrictions: string[];
   }
   
-  export const generateDietPrompt = ({duration, dietPace, patientInfo, weight, height, bmi, activityLevel, workoutType,
+  export const generateDietPrompt = ({duration, dietPace, patientInfo, weight, height, bmi, waist, neck, bodyFat, activityLevel, workoutType,
     goal, desiredWeight, mealQuantity, selectedMeals, exoticAllowed, budget, loveProducts, unloveProducts, restrictions
   }: GenerateDietPromptParams): string => {
     return `Generate a ${duration ? duration : "1"}-days ${dietPace}-paced diet plan for a ${patientInfo?.patientData?.age}-year-old ${patientInfo?.patientData?.gender} based on:
@@ -26,6 +29,10 @@ ${patientInfo?.patientData?.gender === 'male' ? '♂ Male' : '♀ Female'} Profi
 - Current Weight: ${weight} kg
 - Height: ${height} cm
 - BMI: ${bmi}
+${waist && neck ? `
+- Waist: ${waist} (cm)
+- Neck: ${neck} (cm)
+- Body Fat: ${bodyFat}` : ''}
 - Activity Level: ${activityLevel}${workoutType ? ` (${workoutType})` : ''}
 - Goal: ${goal}${desiredWeight ? ` → Target: ${desiredWeight}kg` : ''}
 
@@ -142,8 +149,6 @@ Please provide:
 1. Exact gram measurements for all portions
 2. Calorie estimates per meal
 3. Insulin dosing recommendations${patientInfo?.medicationData?.some((m: { name: string; }) => m.name.toLowerCase().includes('insulin')) ? ' (adjust for current insulin regimen)' : ''}
-4. Macronutrient breakdown (carbs/protein/fat)
-5. Meal prep instructions
-${budget ? `6. Grocery list with budget considerations` : ''}
+4. Meal prep instructions
 `;
 };
