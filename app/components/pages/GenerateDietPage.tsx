@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import IconSVG from "@/app/components/IconSVG";
 import { InputField, SelectInput, StyledCheckbox, TagInput } from '../inputs';
 import { generateDietPrompt } from '@/app/patient-sphere/patient/patient-details/prompts/generateDietPrompt';
+import { DietDescription } from '../DietDescription';
 
 const MEAL_OPTIONS = ['Breakfast', 'Lunch', 'Dinner', 'Brunch', 'Snack', 'Supper'];
 
@@ -458,6 +459,8 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
               Error: {dietError}
           </div>
       )}
+
+      {dietPlan && <DietDescription dietPlan={dietPlan} />}
 
       {dietPlan && (
           <div className="mt-8">

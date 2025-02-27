@@ -177,9 +177,9 @@
     }
 
     function getConditionData(conditions: any[]) {
-        if (!conditions || conditions.length === 0) { return null;}
-
-        const codeConditions = [
+        if (!conditions || conditions.length === 0) return null;
+    
+        const icd10Prefixes = [
             // Metabolic/Endocrine
             'E10', 'E11', 'O24',   // Diabetes
             'E66',                 // Obesity
@@ -211,32 +211,71 @@
             'E73'                   // Lactose intolerance
         ];
     
+        const snomedCodes = [
+            // Diabetes (Type 1: 46635009, Type 2: 44054006, Gestational: 237599001)
+            '46635009', '44054006', '237599001',
+            // Obesity
+            '238136002', '162864005',
+            // Thyroid (Hypothyroidism: 40930008, Goiter: 80394007)
+            '40930008', '80394007',
+            // PKU (373903007), Galactosemia (190782001)
+            '373903007', '190782001',
+            // Gout (30934000)
+            '30934000',
+            // Osteoporosis (64859006)
+            '64859006',
+
+            // Cardiovascular (Hypertension: 38341003, Heart failure: 84114007)
+            '38341003', '84114007',
+            // Hyperlipidemia (55822004)
+            '55822004',
+
+            // Renal (CKD: 723190009, ESRD: 46177005)
+            '723190009', '46177005',
+            // Celiac (396331005), Crohn's (34000006), UC (64766004)
+            '396331005', '34000006', '64766004',
+            // IBS (52702003), GERD (235595009)
+            '52702003', '235595009',
+            // Cirrhosis (19943007), Fatty liver (42946005)
+            '19943007', '42946005',
+
+            // Dysphagia (40845005), Cachexia (23881000119106)
+            '40845005', '23881000119106',
+            // HIV (86406008), Foodborne illness (87628006)
+            '86406008', '87628006',
+            // Eating disorders (361055000), Lactose intolerance (44808001)
+            '361055000', '44808001'
+        ];
     
         const conditionArray: { code: any, name: any; status: any; }[] = [];
         
         conditions.forEach((condition) => {
-            const conditionCode = condition?.code?.coding?.[0]?.code ?? null;
-            const conditionName = condition?.code?.text ?? null;
-            const clinicalStatus = condition?.clinicalStatus?.coding?.[0]?.code ?? null;
-    
+            const clinicalStatus = condition?.clinicalStatus?.coding?.[0]?.code;
             if (!['active', 'recurrence'].includes(clinicalStatus)) return;
     
             const isRelevant = condition?.code?.coding?.some((coding: any) => {
-                const codePrefix = coding.code?.split('.')[0];
-                return codeConditions.includes(codePrefix) && 
-                       coding.system?.startsWith('http://hl7.org/fhir/sid/icd-10');
+                const system = coding.system;
+                const code = coding.code;
+                
+                if (system?.startsWith('http://hl7.org/fhir/sid/icd-10')) {
+                    return icd10Prefixes.includes(code?.split('.')[0]);
+                }
+                if (system === 'http://snomed.info/sct') {
+                    return snomedCodes.includes(code);
+                }
+                return false;
             });
     
             if (isRelevant) {
                 conditionArray.push({
-                    code: conditionCode,
-                    name: conditionName,
+                    code: condition.code?.coding?.[0]?.code,
+                    name: condition.code?.text,
                     status: clinicalStatus
                 });
             }
         });
-
-        return (conditionArray.length > 0) ? conditionArray : null;
+    
+        return conditionArray.length > 0 ? conditionArray : null;
     }
 
     function getDietData(diets: any[]) {
