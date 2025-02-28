@@ -26,33 +26,16 @@ const mealSchema = {
                             fat: { type: "number" },
                             glycemicIndex: { type: "number" }
                         },
-                        required: ["carbs"]
+                        required: ["protein", "carbs", "fiber", "fat"]
                     }
                 },
-                required: ["food", "quantity", "calories"]
+                required: ["food", "quantity", "calories", "nutrients"]
             }
         }
     },
     required: ["items"]
 };
 
-const macronutrientSchema = {
-    type: "object",
-    properties: {
-        carbs: { type: "number" },
-        protein: { type: "number" },
-        fat: { type: "number" },
-        distribution: {
-            type: "object",
-            properties: {
-                morning: { type: "number" },
-                midday: { type: "number" },
-                evening: { type: "number" }
-            }
-        }
-    },
-    required: ["carbs", "protein", "fat"]
-};
 
 
 export async function POST(request: Request) {

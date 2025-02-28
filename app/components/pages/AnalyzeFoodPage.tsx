@@ -19,8 +19,6 @@ export const AnalyzeFoodPage = ({ patientInfo }: { patientInfo: any }) => {
   const [fastingBloodSugar, setFastingBloodSugar] = useState('');
   const [hemoglobinA1c, setHemoglobinA1c] = useState('');
 
-  const [aiRequest, setAiRequest] = useState<any>(null);
-
   useEffect(() => {
     if (patientInfo?.isDiabetes) {
       setFastingBloodSugar(patientInfo.measureData?.fastingGlucose?.split(' ')[0] || '');
@@ -73,6 +71,7 @@ export const AnalyzeFoodPage = ({ patientInfo }: { patientInfo: any }) => {
 
     setIsLoadingImage(true);
     setImageError(null);
+    setImageAnalysis(null);
     
     try {
       const analyzePrompt = analyzeFoodPrompt({diabetesType, currentGlucose, targetGlucose, insulinSensitivity, insulinRatio, 
@@ -94,7 +93,6 @@ export const AnalyzeFoodPage = ({ patientInfo }: { patientInfo: any }) => {
         throw new Error(errorData.message || 'Image analysis failed');
       }
 
-      setAiRequest(formatedPrompt);
       const data = await response.json();
       setImageAnalysis(data);
 
@@ -391,7 +389,9 @@ export const AnalyzeFoodPage = ({ patientInfo }: { patientInfo: any }) => {
                 <div className="hidden md:flex items-baseline gap-4">
                   <div className="relative">
                     <span className="text-4xl font-extrabold text-primary font-fontMain">
-                      {imageAnalysis?.insulinRecommendation?.calculatedDose}
+                    {patientInfo?.isDiabetes
+                        ? imageAnalysis?.insulinRecommendation?.calculatedDose ?? "N/A"
+                        : imageAnalysis?.insulinRecommendation?.calculatedDose?.total ?? "N/A"}
                     </span>
                     <span className="ml-1 text-lg text-secondary font-fontMain font-bold">units</span>
             
@@ -535,22 +535,6 @@ export const AnalyzeFoodPage = ({ patientInfo }: { patientInfo: any }) => {
             </div>
           </div>
         </div>   
-        )}
-      {aiRequest && (
-          <div>
-              <h2 className="text-xl font-bold mb-4">Image Parameters</h2>
-              <pre className="bg-gray-50 p-4 rounded overflow-auto max-h-96 text-sm">
-                  {aiRequest}
-              </pre>
-          </div>
-      )}
-        {imageAnalysis && (
-            <div className="mt-8">
-                <h2 className="text-xl font-bold mb-4">Image Analysis</h2>
-                <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[1000px]">
-                    {JSON.stringify(imageAnalysis, null, 2)}
-                </pre>
-            </div>
         )}
   </div>
   );

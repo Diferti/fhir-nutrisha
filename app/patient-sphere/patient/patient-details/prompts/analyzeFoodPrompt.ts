@@ -38,14 +38,14 @@ export const analyzeFoodPrompt = (
   ${patientInfo?.isDiabetes ? `
   ### Insulin Calculation
   - **Patient Parameters**:
-    - Diabetes Type: ${diabetesParams.diabetesType}
-    ${diabetesParams.fastingBloodSugar ? `- Fasting Blood Sugar: ${diabetesParams.fastingBloodSugar} mmol/L` : ''}
-    ${diabetesParams.hemoglobinA1c ? `- Hemoglobin A1c: ${diabetesParams.hemoglobinA1c}` : ''}
-    ${diabetesParams.insulinSensitivity ? `- Insulin Sensitivity: ${diabetesParams.insulinSensitivity} mmol/L per 1 unit` : ''}
-    ${diabetesParams.insulinRatio ? `- Insulin Ratio: ${diabetesParams.insulinRatio} units/10-12g carbs` : ''}
-    ${diabetesParams.insulinType ? `- Insulin Type: ${diabetesParams.insulinType}` : ''}
-    ${diabetesParams.currentGlucose ? `- Current Glucose: ${diabetesParams.currentGlucose} mmol/L` : ''}
-    ${diabetesParams.targetGlucose ? `- Target Glucose: ${diabetesParams.targetGlucose} mmol/L` : ''}` 
+    - Diabetes Type: ${diabetesParams?.diabetesType}
+    ${diabetesParams?.fastingBloodSugar ? `- Fasting Blood Sugar: ${diabetesParams?.fastingBloodSugar} mmol/L` : ''}
+    ${diabetesParams?.hemoglobinA1c ? `- Hemoglobin A1c: ${diabetesParams?.hemoglobinA1c}` : ''}
+    ${diabetesParams?.insulinSensitivity ? `- Insulin Sensitivity: ${diabetesParams?.insulinSensitivity} mmol/L per 1 unit` : ''}
+    ${diabetesParams?.insulinRatio ? `- Insulin Ratio: ${diabetesParams?.insulinRatio} units/10-12g carbs` : ''}
+    ${diabetesParams?.insulinType ? `- Insulin Type: ${diabetesParams?.insulinType}` : ''}
+    ${diabetesParams?.currentGlucose ? `- Current Glucose: ${diabetesParams?.currentGlucose} mmol/L` : ''}
+    ${diabetesParams?.targetGlucose ? `- Target Glucose: ${diabetesParams?.targetGlucose} mmol/L` : ''}` 
     : ''}
   
     

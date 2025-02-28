@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const MealIcon = ({ type }: any) => {
   const icons: { [key: string]: string } = {
@@ -112,7 +112,7 @@ const PreparationSection = ({ meal, diabete }: any) => {
               Glycemic Index
             </p>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-secondary font-fontMain">{averageGI}</span>
+              <span className="text-2xl font-extrabold text-secondary font-fontMain">{averageGI ? averageGI : "N/A"}</span>
               <span className="text-sm font-bold text-primary/80 font-fontMain">GI</span>
             </div>
           </div>
@@ -127,7 +127,7 @@ const PreparationSection = ({ meal, diabete }: any) => {
               Glycemic Load
             </p>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-secondary font-fontMain">{totalGL}</span>
+              <span className="text-2xl font-extrabold text-secondary font-fontMain">{totalGL ? totalGL : "N/A"}</span>
               <span className="text-sm font-bold text-primary/80 font-fontMain">GL</span>
             </div>
           </div>
@@ -203,7 +203,7 @@ const DayNavigator = ({ current, total, onChange }: any) => (
     <span className="font-extrabold text-4xl font-fontHeader text-secondary">Day {current + 1}</span>
     <button 
       onClick={() => onChange(Math.min(total - 1, current + 1))}
-      disabled={current <= total - 1}
+      disabled={current === total - 1}
       className="px-3 text-secondary border-[1px] bg-primary/20 border-primary rounded-lg disabled:opacity-50 hover:bg-primary/50">
       🢡
     </button>
@@ -282,12 +282,18 @@ const DailySummary = ({ day }: any) => {
 export const DietDescription = ({ dietPlan, diabete }: any) => {
   const [currentDay, setCurrentDay] = useState(0);
   
-  if (!dietPlan?.days?.length) {
+  const validDays = dietPlan?.days?.filter((day: any) => day?.day) || [];
+
+  useEffect(() => {
+    setCurrentDay(0);
+  }, [dietPlan]);
+
+  if (!validDays.length) {
     return <div className="text-center p-8 text-primary/60">Something went wrong, try again!</div>;
   }
 
-  const totalDays = dietPlan.days.length;
-  const currentDayData = dietPlan.days[currentDay] || {};
+  const totalDays = validDays.length;
+  const currentDayData = validDays[currentDay] || {};
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

@@ -150,5 +150,6 @@ Please provide:
 2. Calorie estimates per meal
 3. Insulin dosing recommendations${patientInfo?.medicationData?.some((m: { name: string; }) => m.name.toLowerCase().includes('insulin')) ? ' (adjust for current insulin regimen)' : ''}
 4. Meal prep instructions
+5. The response **must ${duration ? duration + " days" : "1 day"}**—no more, no less.
 `;
 };

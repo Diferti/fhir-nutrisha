@@ -79,7 +79,6 @@ export const GenerateDietPage = ({ patientInfo }: { patientInfo: any }) => {
   const [unloveProducts, setUnloveProducts] = useState<string[]>([]);
 
   const [dietPlan, setDietPlan] = useState<any>(null);
-  const [aiRequest, setAiRequest] = useState<any>(null);
   const [dietError, setDietError] = useState<string | null>(null);
   const [isLoadingDiet, setIsLoadingDiet] = useState(false);
 
@@ -120,6 +119,7 @@ export const GenerateDietPage = ({ patientInfo }: { patientInfo: any }) => {
   const handleGenerateDiet = async () => {
       setIsLoadingDiet(true);
       setDietError(null);
+      setDietPlan(null);
   
       const dietDescription = generateDietPrompt({duration, dietPace, patientInfo, weight, height, bmi, waist, neck, bodyFat, activityLevel, workoutType,
           goal, desiredWeight, mealQuantity, selectedMeals, exoticAllowed, budget, loveProducts, unloveProducts, restrictions});
@@ -139,7 +139,6 @@ export const GenerateDietPage = ({ patientInfo }: { patientInfo: any }) => {
               throw new Error(`HTTP error! status: ${response.status}`);
           }
                     
-          setAiRequest(formatedDietDescription);
           const data = await response.json();
           setDietPlan(data);
       } catch (err) {
@@ -453,15 +452,6 @@ export const GenerateDietPage = ({ patientInfo }: { patientInfo: any }) => {
           </button>
       </div>
 
-      {aiRequest && (
-          <div>
-              <h2 className="text-xl font-bold mb-4">Diet Parameters</h2>
-              <pre className="bg-gray-50 p-4 rounded overflow-auto max-h-96 text-sm">
-                  {aiRequest}
-              </pre>
-          </div>
-      )}
-
       {dietError && (
           <div className="max-w-6xl mx-auto px-4 mt-4 p-4 bg-red-100 text-red-700 rounded font-fontMain font-bold">
               Error: {dietError}
@@ -469,15 +459,6 @@ export const GenerateDietPage = ({ patientInfo }: { patientInfo: any }) => {
       )}
 
       {dietPlan && <DietDescription dietPlan={dietPlan} diabete={patientInfo?.isDiabetes}/>}
-
-      {dietPlan && (
-          <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4">Generated Diet Plan</h2>
-              <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[1000px]">
-                  {JSON.stringify(dietPlan, null, 2)}
-              </pre>
-          </div>
-      )}
     </div>
   );
 };
