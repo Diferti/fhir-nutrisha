@@ -13,8 +13,9 @@
             const medicationData = getMedicationData(medications);
             const conditionData = getConditionData(conditions);
             const dietData = getDietData(diets);
+            const isDiabetes = diabetesCode(conditionData);
 
-            return { patientData, measureData, allergyData, medicationData, conditionData, dietData };
+            return { patientData, measureData, allergyData, medicationData, conditionData, dietData, isDiabetes };
         } catch (error) {
             console.error("Error getting patient data:", error);
             return null;
@@ -43,7 +44,7 @@
         return {firstName, lastName, fullName, birthDate, age, gender};
     }
 
-    function getMeasureValue(obs) {
+    function getMeasureValue(obs: { valueQuantity: { value: any; unit: any; }; valueCodeableConcept: { text: any; coding: { display: any; }[]; }; valueString: any; valueBoolean: { toString: () => any; } | undefined; }) {
         if (obs.valueQuantity) {
           return `${obs.valueQuantity.value} ${obs.valueQuantity.unit}`;
         }
@@ -74,6 +75,8 @@
             // Diabetes Management
             '1558-6': 'fastingGlucose',     // Blood sugar after fasting - diabetes screening
             '4548-4': 'hbA1c',              // Hemoglobin A1c - 3-month average blood sugar (diabetes control)
+            '62418-9': 'insulinRatio',      // Glucose/Insulin ratio
+            '92845-7': 'insulinSensitivity',// Insulin resistance score (lower score better sensitivity)
             
             // Lipid Profile
             '18262-6': 'ldl',               // "Bad" cholesterol - artery clogging risk
@@ -103,11 +106,12 @@
             // NUTRITIONAL MARKERS
             '62238-1': 'vitaminD',          // Bone health/immune function
             '2132-9': 'vitaminB12',         // Nerve function/red blood cell production
-            '2498-4': 'ironStudies',        // Iron levels - anemia detection
+            '2498-4': 'serumIron',          // Serum iron level
+            '2499-2': 'ironStudies',        // Iron panel - serum
         
             // SPECIAL CONSIDERATIONS
             '82810-3': 'pregnancyStatus',   // Critical for prenatal nutrition
-            '24843006': 'swallowingStatus', // Dysphagia - affects food texture requirements
+            '60881-5': 'swallowingStatus',  // Swallowing function observation
             '62715-8': 'fluidIntake',       // Total liquid consumption - hydration monitoring
             '8281-5': 'urineOutput',        // Fluid elimination - kidney/hydration status
             '80498-0': 'ree'                // Resting Energy Expenditure - baseline calorie needs
@@ -213,7 +217,7 @@
     
         const snomedCodes = [
             // Metabolic/Endocrine
-            '46635009', '44054006', '237599001',    // Diabetes
+            '46635009', '44054006', '199223000',    // Diabetes
             '238136002', '162864005',               // Obesity
             '40930008', '80394007',                 // Thyroid
             '190687004', '190745006',               // PKU, Galactosemia
@@ -294,4 +298,27 @@
         });
     
         return (dietDetails.length > 0) ? dietDetails : null;
+    }
+
+    function diabetesCode(conditions: any[] | null) {
+        if (!conditions || conditions.length === 0) return null;
+    
+        const diabetesCodes = new Set([
+            'E10', 'E11', 'O24',          // ICD-10 prefixes
+            '46635009', '44054006', '199223000' // SNOMED CT codes
+        ]);
+    
+        const foundCondition = conditions.find(condition => {
+            const status = condition?.status;
+            const code = condition?.code;
+    
+            if (!['active', 'recurrence'].includes(status) || !code) return false;
+    
+            return code.startsWith('E10') || 
+                   code.startsWith('E11') || 
+                   code.startsWith('O24') || 
+                   diabetesCodes.has(code);
+        });
+    
+        return foundCondition?.code || null;
     }

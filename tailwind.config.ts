@@ -23,6 +23,17 @@ const config: Config = {
       screens: {
         '2k': '2000px',
       },
+      animation: {
+        dots: 'dots 2s infinite steps(1)',
+        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        dots: {
+          '0%, 100%': { content: "'.'" },
+          '33%': { content: "'..'" },
+          '66%': { content: "'...'" },
+        }
+      },
     },
   },
   plugins: [],

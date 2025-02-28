@@ -11,6 +11,7 @@ export const analyzeFoodPrompt = (
     },
     patientInfo?: {
       allergyData?: string[];
+      isDiabetes?: string;
     }
   ) => {
     const allergies = patientInfo?.allergyData?.filter(Boolean).join(', ');
@@ -34,16 +35,19 @@ export const analyzeFoodPrompt = (
     - Volume (ml) for liquids/sauces
   - **Confidence levels**: 0-100% for each identification
   
+  ${patientInfo?.isDiabetes ? `
   ### Insulin Calculation
   - **Patient Parameters**:
     - Diabetes Type: ${diabetesParams.diabetesType}
     ${diabetesParams.fastingBloodSugar ? `- Fasting Blood Sugar: ${diabetesParams.fastingBloodSugar} mmol/L` : ''}
-    ${diabetesParams.hemoglobinA1c ? `- Hemoglobin A1c: ${diabetesParams.hemoglobinA1c}%` : ''}
+    ${diabetesParams.hemoglobinA1c ? `- Hemoglobin A1c: ${diabetesParams.hemoglobinA1c}` : ''}
     ${diabetesParams.insulinSensitivity ? `- Insulin Sensitivity: ${diabetesParams.insulinSensitivity} mmol/L per 1 unit` : ''}
     ${diabetesParams.insulinRatio ? `- Insulin Ratio: ${diabetesParams.insulinRatio} units/10-12g carbs` : ''}
     ${diabetesParams.insulinType ? `- Insulin Type: ${diabetesParams.insulinType}` : ''}
     ${diabetesParams.currentGlucose ? `- Current Glucose: ${diabetesParams.currentGlucose} mmol/L` : ''}
-    ${diabetesParams.targetGlucose ? `- Target Glucose: ${diabetesParams.targetGlucose} mmol/L` : ''}
+    ${diabetesParams.targetGlucose ? `- Target Glucose: ${diabetesParams.targetGlucose} mmol/L` : ''}` 
+    : ''}
+  
     
   - **Recommendations**:
     - Suggested insulin dose (units)
@@ -58,6 +62,7 @@ export const analyzeFoodPrompt = (
   - **Suggestions**:
     ${allergyDisclaimer}
     - Missing food groups (e.g., "add leafy greens")
+ 
   
   ### Requirements:
   - Use metric units only (grams, milliliters, kcal)

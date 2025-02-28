@@ -3,14 +3,14 @@ import { useDropzone } from 'react-dropzone';
 import { analyzeFoodPrompt } from '@/app/patient-sphere/patient/patient-details/prompts/analyzeFoodPrompt';
 import IconSVG from "@/app/components/IconSVG";
 
-export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
+export const AnalyzeFoodPage = ({ patientInfo }: { patientInfo: any }) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [imageAnalysis, setImageAnalysis] = useState<any>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const [diabetesType, setDiabetesType] = useState('1');
+  const [diabetesType, setDiabetesType] = useState('');
   const [currentGlucose, setCurrentGlucose] = useState('');
   const [targetGlucose, setTargetGlucose] = useState('5.5');
   const [insulinSensitivity, setInsulinSensitivity] = useState('');
@@ -18,6 +18,25 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
   const [insulinType, setInsulinType] = useState('ultrashort');
   const [fastingBloodSugar, setFastingBloodSugar] = useState('');
   const [hemoglobinA1c, setHemoglobinA1c] = useState('');
+
+  const [aiRequest, setAiRequest] = useState<any>(null);
+
+  useEffect(() => {
+    if (patientInfo?.isDiabetes) {
+      setFastingBloodSugar(patientInfo.measureData?.fastingGlucose?.split(' ')[0] || '');
+      setHemoglobinA1c(patientInfo.measureData?.hbA1c?.split(' ')[0] || '');
+      setInsulinSensitivity(patientInfo.measureData?.insulinSensitivity?.split(' ')[0] || '');
+      setInsulinRatio(patientInfo.measureData?.insulinRatio?.split(' ')[0] || '');
+
+      const diabetesCode = patientInfo.isDiabetes;
+      if (diabetesCode.startsWith('E10')) setDiabetesType('1');
+      else if (diabetesCode.startsWith('E11')) setDiabetesType('2');
+      else if (diabetesCode.startsWith('O24')) setDiabetesType('3');
+      else if (['46635009'].includes(diabetesCode)) setDiabetesType('1');
+      else if (['44054006'].includes(diabetesCode)) setDiabetesType('2');
+      else if (['199223000'].includes(diabetesCode)) setDiabetesType('3');
+    }
+  }, [patientInfo?.isDiabetes]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -59,9 +78,11 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
       const analyzePrompt = analyzeFoodPrompt({diabetesType, currentGlucose, targetGlucose, insulinSensitivity, insulinRatio, 
             insulinType, fastingBloodSugar, hemoglobinA1c}, patientInfo);
       
+      const formatedPrompt = analyzePrompt.split("\n").filter(line => line.trim()).join("\n");
+      
       const formData = new FormData();
       formData.append('image', uploadedFile);
-      formData.append('systemPrompt', JSON.stringify(analyzePrompt));
+      formData.append('systemPrompt', JSON.stringify(formatedPrompt));
 
       const response = await fetch('/api/analyze-image', {
         method: 'POST',
@@ -73,6 +94,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
         throw new Error(errorData.message || 'Image analysis failed');
       }
 
+      setAiRequest(formatedPrompt);
       const data = await response.json();
       setImageAnalysis(data);
 
@@ -135,13 +157,13 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
       <main className="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 items-stretch">
         <section className="flex-1">
           <div className="bg-pageColor p-8 border border-primary rounded-[15px] 
-                shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full">
+                shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full max-w-[700px] mx-auto">
             <div
               {...getRootProps()}
               className={`border-2 border-dashed rounded-xl cursor-pointer transition-colors
                   ${isDragActive ? 'border-primary bg-primary/25' : 'border-gray-300 hover:border-primary'}
-                  w-full aspect-square max-w-auto h-full relative overflow-hidden`}
-            >
+                  aspect-square max-w-auto relative overflow-hidden
+                  ${patientInfo?.isDiabetes ? "h-full w-full" : "max-h-[700px] max-w-[700px] mx-auto"}`}>
               <input {...getInputProps()} />
               <div className="absolute inset-0 flex flex-col items-center justify-center p-[3px]">
                 {!uploadedImage ? (
@@ -176,7 +198,8 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
           </div>
         </section>
 
-        <section className="w-full lg:w-96 flex flex-col">
+        {patientInfo?.isDiabetes && (
+          <section className="w-full lg:w-96 flex flex-col">
           <div className="bg-pageColor p-8 border border-primary rounded-[15px] 
               shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full space-y-4">
             <h3 className="text-xl font-fontHeader font-bold text-primary">Diabetes Parameters</h3>
@@ -185,7 +208,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
               <div>
                 <label className="block text-sm mb-1">Diabetes Type</label>
                 <select value={diabetesType} onChange={(e) => setDiabetesType(e.target.value)}
-                  className="w-full p-2 border rounded-md form-select">
+                  className="w-full p-2 border rounded-md form-select" disabled>
                   <option value="1">Type 1</option>
                   <option value="2">Type 2</option>
                   <option value="3">Gestational</option>
@@ -243,12 +266,13 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
             </div>
           </div>
         </section>
+        )} 
       </main>
 
       <div className="flex justify-center px-4">
-        <button onClick={imageSender} className="flex items-center justify-left gap-2 w-full bg-primary/10
+        <button onClick={imageSender} disabled={isLoadingImage} className="flex items-center justify-left gap-2 w-full bg-primary/10
             border-[3px] border-primary text-secondary rounded-lg hover:bg-primary/50 transition-colors
-            max-w-[400px] mx-auto p-[5px] pl-[5px] md:pl-[30px]">
+            max-w-[400px] mx-auto p-[5px] pl-[5px] md:pl-[30px] disabled:cursor-not-allowed disabled:animate-pulse">
           <div className="flex-shrink-0">
             <IconSVG
                 type="logoAnalyze"
@@ -257,7 +281,14 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                 height="100"/>
           </div>
           <span className="text-2xl md:text-3xl font-extrabold uppercase font-fontHeader">
-            {isLoadingImage ? "Analyzing..." : "Analyze"}
+          {isLoadingImage ? (
+              <span className="flex items-center gap-1">
+                Analyzing
+                <span className="relative before:content-['.'] before:animate-dots"></span>
+              </span>
+            ) : (
+              "Analyze"
+            )}
           </span>
         </button>
       </div>
@@ -334,6 +365,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
           </div>
         </div>
         
+        {patientInfo?.isDiabetes && (
         <div className="bg-pageColor p-[15px] md:p-8 border border-primary rounded-[15px] 
               shadow-[10px_10px_30px_0px_rgb(var(--shadow)/0.25)] h-full space-y-4">
           <div className="flex items-start gap-4">
@@ -351,48 +383,48 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
               </svg>
             </div>
 
-            <div className="flex-1">
-              <h3 className="text-lg xl:text-2xl font-extrabold font-fontHeader text-secondary uppercase tracking-wide mb-2">
-                Insulin Recommendation
-              </h3>
-      
-              <div className="hidden md:flex items-baseline gap-4">
-                <div className="relative">
-                  <span className="text-4xl font-extrabold text-primary font-fontMain">
-                    {imageAnalysis?.insulinRecommendation?.calculatedDose}
-                  </span>
-                  <span className="ml-1 text-lg text-secondary font-fontMain font-bold">units</span>
-          
-                  <div className="absolute -top-2 -right-2">
-                    <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-primary/90 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+              <div className="flex-1">
+                <h3 className="text-lg xl:text-2xl font-extrabold font-fontHeader text-secondary uppercase tracking-wide mb-2">
+                  Insulin Recommendation
+                </h3>
+        
+                <div className="hidden md:flex items-baseline gap-4">
+                  <div className="relative">
+                    <span className="text-4xl font-extrabold text-primary font-fontMain">
+                      {imageAnalysis?.insulinRecommendation?.calculatedDose}
+                    </span>
+                    <span className="ml-1 text-lg text-secondary font-fontMain font-bold">units</span>
+            
+                    <div className="absolute -top-2 -right-2">
+                      <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-primary/90 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-pageColor px-3 py-1 rounded-full border border-thirdary">
+                    <svg 
+                        className="w-5 h-5 text-primary" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24">
+                    <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm font-bold font-fontMain text-secondary">
+                      {imageAnalysis?.insulinRecommendation?.timingAdvice}
+                    </span>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2 bg-pageColor px-3 py-1 rounded-full border border-thirdary">
-                  <svg 
-                      className="w-5 h-5 text-primary" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24">
-                  <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  <span className="text-sm font-bold font-fontMain text-secondary">
-                    {imageAnalysis?.insulinRecommendation?.timingAdvice}
-                  </span>
+                <div className="mt-4 hidden md:flex p-3 border-l-4 bg-primary/30 border-primary">
+                  <p className="font-bold font-fontMain text-secondary">
+                    <span className="text-lg font-extrabold text-primary font-fontHeader">Tip:</span>
+                    {'  '}{imageAnalysis?.insulinRecommendation?.tip} 
+                  </p>
                 </div>
-              </div>
-              <div className="mt-4 hidden md:flex p-3 border-l-4 bg-primary/30 border-primary">
-                <p className="font-bold font-fontMain text-secondary">
-                  <span className="text-lg font-extrabold text-primary font-fontHeader">Tip:</span>
-                  {'  '}{imageAnalysis?.insulinRecommendation?.tip} 
-                </p>
-          </div>
-            </div>
+              </div> 
           </div>
           <div className="flex md:hidden items-baseline gap-4">
                 <div className="relative">
@@ -431,6 +463,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                 </p>
           </div>
         </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-8 items-stretch">
             <div className="bg-pageColor p-[15px] md:p-8 md:pt-[16px] border border-primary rounded-[15px] 
@@ -469,7 +502,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                 </div>
                 <h3 className="text-xl xl:text-2xl font-fontHeader font-extrabold text-green-800 mb-3">Suggestions</h3>
                 <ul className="list-disc pl-5 space-y-2 font-fontMain">
-                  {imageAnalysis?.mealAssessment?.suggestions.map((suggestion: any, index: any) => (
+                  {imageAnalysis?.mealAssessment?.suggestions?.map((suggestion: any, index: any) => (
                     <li key={index} className="text-base text-green-700 font-fontMain">{suggestion}</li>
                   ))}
                 </ul>
@@ -484,7 +517,7 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
                 </div>
                 <h3 className="text-xl xl:text-1xl font-fontHeader font-extrabold text-red-800 mb-3">Warnings</h3>
                 <ul className="list-disc pl-5 space-y-2 font-fontMain">
-                  {imageAnalysis?.mealAssessment?.warnings.map((warning: any, index: any) => (
+                  {imageAnalysis?.mealAssessment?.warnings?.map((warning: any, index: any) => (
                     <li key={index} className="text-base text-red-700 font-fontMain">{warning}</li>
                   ))}
                 </ul>
@@ -492,18 +525,25 @@ export const AnalyzeFoodPage = ({ patientInfo, isDarkMode }: { patientInfo: any,
             </div>
           </div>
           <div className="text-sm text-secondary font-fontMain space-y-2">
-            {imageAnalysis?.confidenceNotes.map((note: any, index: any) => (
+            {imageAnalysis?.confidenceNotes?.map((note: any, index: any) => (
               note && note !== "" ? (<p key={index}>* {note}</p>) : null
             ))}
             <div className="pt-4 border-t border-thirdary">
-                {imageAnalysis?.disclaimers.map((disclaimer: any, index: any) => (
+                {imageAnalysis?.disclaimers?.map((disclaimer: any, index: any) => (
                     <p key={index} className="italic">{disclaimer}</p>
                 ))}
             </div>
           </div>
         </div>   
         )}
-
+      {aiRequest && (
+          <div>
+              <h2 className="text-xl font-bold mb-4">Image Parameters</h2>
+              <pre className="bg-gray-50 p-4 rounded overflow-auto max-h-96 text-sm">
+                  {aiRequest}
+              </pre>
+          </div>
+      )}
         {imageAnalysis && (
             <div className="mt-8">
                 <h2 className="text-xl font-bold mb-4">Image Analysis</h2>

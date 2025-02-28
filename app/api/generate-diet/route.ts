@@ -96,7 +96,11 @@ export async function POST(request: Request) {
                                                             enum: ["Breakfast", "Brunch", "Lunch", "Snack", "Dinner", "Supper"],
                                                             description: "Adapt based on total meals and user preferences"
                                                         },
-                                                        time: { type: "string", format: "HH:mm" },
+                                                        time: { 
+                                                            type: "string", 
+                                                            format: "time",
+                                                            description: "Time in 24-hour clock (HH:mm format, 00:00 to 23:59)" 
+                                                        },
                                                         items: mealSchema.properties.items,
                                                         totalCalories: { type: "number" },
                                                         carbsForInsulin: { type: "number" },

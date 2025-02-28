@@ -58,7 +58,7 @@ const calculateMealTotals = (meal: any) => {
   };
 };
 
-const PreparationSection = ({ meal }: any) => {
+const PreparationSection = ({ meal, diabete }: any) => {
   const { protein, carbs, fat, fiber, averageGI, totalGL } = calculateMealTotals(meal);
 
   return (
@@ -101,8 +101,8 @@ const PreparationSection = ({ meal }: any) => {
             icon="🌿"/>
         </div>
       </div>
-
-      <div className="grid grid-cols-2 gap-4 mt-6">
+      {diabete && (
+        <div className="grid grid-cols-2 gap-4 mt-6">
         <div className="bg-primary/10 p-4 rounded-xl border border-primary/20 flex items-center gap-2 lg:gap-3">
           <div>
             <span className="text-[30px] lg:text-[45px]">📈</span>
@@ -132,12 +132,13 @@ const PreparationSection = ({ meal }: any) => {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const MealCard = ({ meal }: any) => {
+const MealCard = ({ meal, diabete }: any) => {
   const [expanded, setExpanded] = useState(false);
 
   if (!meal) return null;
@@ -183,7 +184,7 @@ const MealCard = ({ meal }: any) => {
                 </div>
               ))}
             </div>
-            <PreparationSection meal={meal} />
+            <PreparationSection meal={meal} diabete={diabete} />
           </div>
         </div>
       )}
@@ -202,7 +203,7 @@ const DayNavigator = ({ current, total, onChange }: any) => (
     <span className="font-extrabold text-4xl font-fontHeader text-secondary">Day {current + 1}</span>
     <button 
       onClick={() => onChange(Math.min(total - 1, current + 1))}
-      disabled={current === total - 1}
+      disabled={current <= total - 1}
       className="px-3 text-secondary border-[1px] bg-primary/20 border-primary rounded-lg disabled:opacity-50 hover:bg-primary/50">
       🢡
     </button>
@@ -278,7 +279,7 @@ const DailySummary = ({ day }: any) => {
   );
 };
 
-export const DietDescription = ({ dietPlan }: any) => {
+export const DietDescription = ({ dietPlan, diabete }: any) => {
   const [currentDay, setCurrentDay] = useState(0);
   
   if (!dietPlan?.days?.length) {
@@ -300,7 +301,7 @@ export const DietDescription = ({ dietPlan }: any) => {
           {(currentDayData?.meals || [])
             .sort((a: any, b: any) => (a?.time || '').localeCompare(b?.time || ''))
             .map((meal: any, index: number) => (
-              <MealCard key={`${meal?.mealType}-${index}`} meal={meal} />
+              <MealCard key={`${meal?.mealType}-${index}`} meal={meal} diabete={diabete} />
             ))}
         </div>
         

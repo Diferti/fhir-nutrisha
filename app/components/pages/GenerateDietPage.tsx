@@ -53,7 +53,7 @@ const AdvancedMeasurements = ({ showAdvanced, setShowAdvanced, waist, setWaist, 
   </div>
 );
 
-export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any, isDarkMode: boolean}) => {
+export const GenerateDietPage = ({ patientInfo }: { patientInfo: any }) => {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -114,8 +114,6 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
       if (patientInfo?.measureData) {
           setHeight(patientInfo.measureData.height?.split(' ')[0] || '');
           setWeight(patientInfo.measureData.weight?.split(' ')[0] || '');
-          setWaist(patientInfo.measureData.waist || '');
-          setNeck(patientInfo.measureData.neck || '');
       }
   }, [patientInfo]);
 
@@ -432,9 +430,9 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
       </div>
 
       <div className="flex justify-center px-4">
-          <button onClick={handleGenerateDiet} className="flex items-center justify-left gap-2 w-full bg-primary/10
+          <button onClick={handleGenerateDiet} disabled={isLoadingDiet} className="flex items-center justify-left gap-2 w-full bg-primary/10
               border-[3px] border-primary text-secondary rounded-lg hover:bg-primary/50 transition-colors
-              max-w-[400px] mx-auto p-[5px] pl-[0px] md:pl-[25px]">
+              max-w-[400px] mx-auto p-[5px] pl-[0px] md:pl-[25px] disabled:cursor-not-allowed disabled:animate-pulse">
             <div className="flex-shrink-0">
                 <IconSVG
                     type="logoGenerate"
@@ -443,7 +441,14 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
                     height="100"/>
             </div>
             <span className="text-2xl md:text-3xl font-extrabold uppercase font-fontHeader">
-                {isLoadingDiet ? "Generating..." : "Generate"}
+            {isLoadingDiet ? (
+              <span className="flex items-center gap-1">
+                Generating
+                <span className="relative before:content-['.'] before:animate-dots"></span>
+              </span>
+            ) : (
+              "Generate"
+            )}
             </span>
           </button>
       </div>
@@ -463,7 +468,7 @@ export const GenerateDietPage = ({ patientInfo, isDarkMode }: { patientInfo: any
           </div>
       )}
 
-      {dietPlan && <DietDescription dietPlan={dietPlan} />}
+      {dietPlan && <DietDescription dietPlan={dietPlan} diabete={patientInfo?.isDiabetes}/>}
 
       {dietPlan && (
           <div className="mt-8">
