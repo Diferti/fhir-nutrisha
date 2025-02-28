@@ -1,4 +1,34 @@
-# MeldRx Template App - Blank (NextJs)
+# Nutrisha 🌱
+
+Your personal AI-powered nutritionist designed to make smart nutrition simple and accessible. Achieve your health goals with personalized dietary guidance powered by cutting-edge AI and your FHIR health information.
+
+---
+
+## ✨ Key Features
+
+### 📅🍎 Generate Diet Plan 
+- **Set Your Preferences**: Customize your diet by sharing your activity level, health goals, meal configuration, dietary preferences, restrictions, and food preferences.
+![Preferences](/public/images/readme-images/preferences.png)
+
+- **Generate Personalized Diet Plans**: Get custom meal plans based on your preferences and FHIR health profile.
+![Diet](/public/images/readme-images/diet-plan.png)
+ 
+### 🍜🔍 Analyze Meals from image
+- **Take picture of food**: Upload meal photos for instant nutritional insights (calories, macros, and more).
+![Load Image](/public/images/readme-images/image-load.png)
+
+- **Get detailed analysis**: Nutrisha provides a total food analysis, including a nutritional breakdown, identified products, insulin recommendation, meal assessment, suggestions and warnings.  
+![Image Analysis](/public/images/readme-images/image-analysis.png)
+
+### ☀️🌙 Light and Dark modes
+- **Light mode**
+![Load Image](/public/images/readme-images/light-mode.png)
+
+- **Dark mode**
+![Load Image](/public/images/readme-images/dark-mode.png)
+---
+
+**Smart Nutrition Made Simple** — Let Nutrisha empower your journey to a healthier you! 💪  
 
 ## Getting Started
 Before launching the app ensure the following configuration steps have been followed:
@@ -25,7 +55,7 @@ Before launching the app ensure the following configuration steps have been foll
 
 
 ### Preqrequisites
-- NodeJs
+- Node.js
 
 ### App Setup/Installation
 - Run `npm install`
