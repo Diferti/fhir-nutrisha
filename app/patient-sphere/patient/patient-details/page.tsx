@@ -53,13 +53,6 @@ export default function Page(props: IPageProps) {
             <PageHolder>
                 {renderPage()}
             </PageHolder>
-            
-            <Head><title>Patient Details</title></Head>
-            {isLoading && <div>Loading...</div>}
-
-            <pre>
-                {JSON.stringify(patientInfo, null, 2)}
-            </pre>
         </div>
     );
 }
